@@ -1,0 +1,76 @@
+cmp.w <ea>, Dn 4(1/0) + <ea> time
+cmp.l <ea>, Dn 6(1/0) + <ea> time
+cmp.w #num, Dn 4(1/0) + 4(1/0)
+cmp.l #num, Dn 6(1/0) + 8(2/0)
+
+cmpi.w #num, Dn 8(2/0)
+cmpi.l #num, Dn 14(3/0)
+
+
+movem
+
+subtype field (bits 9-11) = 110 or 100 depending on direction
+bit 8 = 0
+bit 7 = 1
+bit 6 = size
+
+
+
+x86-64 registers in 68K core
+
+1. native stack pointer
+2. current cycle count
+3. target cycle count
+4. cartridge address
+5. work ram address
+6. scratch register
+7. context pointer (contains 68K registers and memory pointers not in registers)
+8. status register (maybe, depends on how well I can abuse native x86 status stuff)
+Rest of registers used for holding 68K registers
+
+rax = cycle counter
+bl = N flag
+bh = V flag
+rcx = scratch register
+dl = Z flag
+dh = C flag
+rbp = target cycle count
+rsi = context pointer
+rdi = scratch register
+r8 = cartridge address
+r9 = work ram address
+r10 = d0
+r11 = d1
+r12 = d2
+r13 = a0
+r14 = a1
+r15 = a7
+rsp = native stack pointer
+
+68K context:
+uint8_t flags[5];
+uint8_t pad??[3]
+uint32_t dregs[8]; //8 + 4 * reg
+uint32_t aregs[8]; //40 + 4 * reg
+.....
+
+x86-64 registers in Z80 core
+
+ax = HL
+bx = BC
+cx = DE
+dx = IX
+ebp = current cycle count
+rsi = context pointer
+edi = target cycle count
+rsp = native stack pointer
+r8 = IY
+r9 = SP
+r10 = A (maybe AF?)
+r11 = z80 ram address
+r12 = cartridge address if bank is pointed at ROM
+r13 = scratch1
+r14 = scratch2
+r15 = ?maybe z80 bank register?
+
+
