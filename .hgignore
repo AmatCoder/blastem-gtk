@@ -1,0 +1,27 @@
+syntax: glob
+*.dis
+*.asm
+*.bin
+*.png
+*.jpg
+*.pdf
+*.tar.gz
+*.list
+*~
+starscream/*
+gxz80/*
+musashi/*
+vdpreverse/*
+nemesis/*
+html/*
+generated_tests/*
+ztests/*
+*.o
+*.list
+blastem
+dis
+stateview
+trans
+zdis
+ztestrun
+address.log
