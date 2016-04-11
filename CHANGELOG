@@ -1,0 +1,83 @@
+0.3.1
+-----
+*New Features*
+
+ - BlastEm will now open a new terminal window when starting the debugger if it's not attached to one
+ - Errors are displayed in a message box if no terminal is attached
+ - Pure SDL render path for when OpenGL 2 is unavailable (thanks Higor Eurípedes)
+ 
+*Bugfixes*
+
+ - GDB remote debugging works again
+ - Fixed a name conflict that prevented vgmplay from being built on OS X
+ 
+*Other Changes*
+
+ - Windows build now includes the disassemblers, VGM player and save state viewer
+
+0.3.0
+-----
+*New Features*
+
+ - 32-bit x86 CPUs are now supported
+ - BlastEm is now available for OS X and Windows
+ - Finished support for the Sega mapper used by Super Street Fighter 2
+ - Added support for EEPROM saves
+ - Added support for large flat-mapped ROMs (used by some homebrew ROMS)
+ - New 68K debugger command bt (backtrace)
+ - I/O devices (gamepads and other peripherals) can now be configured in blastem.cfg
+ - VDP Debugger views from before 0.1.0 have been restored
+ 
+*Bugfixes*
+
+ - Partial emulation of floating bus bits for certain I/O regs (fixes Super Offroad 2)
+ - Fixed shadow/highlight mode
+ - Implemented AM and fixed LFO update speed
+ - Fixed negative detune values
+ - Corrected register to operator mapping for channel 3 special mode
+ - Initial stab at emulating cycles being stolen from the 68K when the Z80 accesses its bus
+ - Better handling of creating a savestate in "uncooperative" games/demos
+ - Implemented VSCROLL latching
+ - Fixed a bug that would corrupt the Z80's SP register in some situations
+ - Fixed PAL flag in VDP status register
+ - Fixed HV counter
+ - Fixed flag calculation for RRA, RRCA, RLA and RLCA
+ - Fixed instruction timing for RR, RRC, RL and RLC when using the IX or IY registers
+ - Fixed access to the I and R registers
+
+*Other Changes*
+
+ - Upgraded to SDL2
+ - Dropped suport for the non-OpenGL render path
+ - Linux builds should now work on something other than the specific version of Ubuntu I happen to be using at build time
+ - BlastEm now syncs at least once per line by default. You can change this behavior with the max_clocks config value
+
+0.2.0
+-----
+*New Features*
+
+- Added Turbo and Slow modes that overclock and underclock the system respectively
+- Added FPS counter
+- New OpenGL render backend that allows filters to be writte in GLSL
+- Support 'UI' bindings on gamepad buttons and dpads
+- GDB remote debugging support
+- New debugger 68K debugger commands o, s and zp (see README for details)
+
+*Bugfixes*
+
+- Fixed argument handling so that the ROM filename does not need to be specified first
+- Don't allow register writes to Mode 5 only regs when in Mode 4
+- Fixed a bunch of VDP edge case behavior checked by Nemesis's test ROM
+- Fixed operator 1 self-feedback
+- Fixed handling of envelope overflow in attack phase
+- Fixed handling of channel output overflow
+- Adjusted FM and PSG volume to better match real hardware
+- Improved YM-2612 busy flag emulation
+- Properly sync hardware at end of frame when the 68K is blocked by DMA
+- Approximate wait state behavior when the Z80 accesses the 68K's bus
+- Implemented HV counter latch
+- Implemented sprite overflow and collision flags
+
+0.1.0
+-----
+Initial Release
