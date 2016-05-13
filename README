@@ -1,0 +1,296 @@
+BlastEm 0.4.0
+-------------
+
+Installation
+------------
+
+Extract this archive to a directory of your choosing. If you wish to change the
+configuration settings, copy default.cfg to $HOME/.config/blastem/blastem.cfg and
+modify the copy. You may also whish to add the blastem directory to your PATH
+environment variable.
+
+Usage
+-----
+
+This version of BlastEm has an experimental GUI that is implemented as a Genesis
+ROM running inside the emulator. This UI can be operated with either a mouse or
+the first emulated gamepad. By default, both the keyboard and the first game
+controller are mapped to said gamepad. For more information on bindings see the
+Bindings section.
+
+Some operations are currently only supported through the command line. To get a
+list of supported command line options on Linux or OSX type:
+
+	./blastem -h
+	
+From within your BlastEm directory. On Windows type:
+	
+	blastem.exe -h
+	
+Lock-On Support
+---------------
+
+This version of BlastEm has some preliminary support for Sonic & Knuckles lock
+on technology. This is only available from the command line at the moment. To
+use it specify the Sonic & Knuckles ROM as the primary ROM and specify the ROM
+to be locked on using the -o option. As an example:
+
+	./blastem ~/romz/sonic_and_knuckles.bin -o ~/romz/sonic3.bin
+	
+Please note that Sonic 2 lock-on does not work at this time. Additionally the
+save RAM added by Sonic 3 won't work either.
+
+Configuration
+-------------
+
+Configuration is read from the file at $HOME/.config/blastem/blastem.cfg if it
+exists, othwerise it is read from default.cfg from the same directory as the
+BlastEm executable. Sections are denoted by a section name followed by an open
+curly bracket, the section's contents and a closing curly bracket. Individual
+configuration values are set by entering the value's name followed by a space
+or tab and followed by the desired value.
+
+Bindings
+--------
+
+The keys subsection of bindings maps keyboard keys to gamepad buttons or UI
+actions. The key name goes on the left and the action is on the right.
+Most keys are named for the character they produce when pressed. Additionally,
+the arrow, enter and escape keys have the symbolic names up, down, left, right,
+enter and esc respectively. Other keys that do not produce characters are not
+yet supported.
+
+The pads subsection is used to map gamepads and joysticks. Analog axes are not
+currently supported. An example configuration is provided in default.cfg to map
+SDL joystick 0 to the first controller and SDL joystick 1 to the second
+controller. The button assignments there work well for a 360 controller (at 
+least on Linux, it's possible the physical button to button number is different
+on other operating systems).
+
+The mice subsection is used to map mice to emulated Mega/Sega mice. The default
+configuration maps both the first and second host mice to the first emulated
+mouse. This should not need modification for most users.
+
+One special mapping deserves a mention. By default, the 'r' key is mapped to
+ui.release_mouse. When operating in windowed mode the mouse has a capture
+behavior. Mouse events are ignored until you click in the window. The mouse
+will then be "captured" and the cursor will be both made invisible and locked
+to the window. The ui.release_mouse binding releases the mouse so it can be
+used normally.
+
+IO
+--
+
+This section controls which peripherals are attached to the emulated console.
+IO assignments can be overridden by the ROM database when appropriate. For
+instance, games with mouse support can automatically use the mouse and games
+that only support 3-button pads can automatically force an appropriate pad.
+Unforunately, the ROM database is not yet exhaustive so manual configuration
+may be needed here in some cases.
+
+Video
+-----
+
+The video section contains settings that affect the visual output of BlastEm.
+
+"width" is used to control the window size when not in fullscreen mode. The
+height of the window is calculated from this value. Both width and height can
+be overridden from the command line.
+
+"vertex_shader" and "fragment_shader" define the GLSL shader program that
+produces the final image for each frame. Shaders can be used to add various
+visual effects or enhancements. Currently BlastEm only ships with the default
+shader. If you write your own shaders, place them in 
+$HOME/.config/blastem/shaders and then specify the basename of the new shader
+files in the "vertex_shader" and "fragment_shader" config options. Note that
+shaders are not available in the SDL fallback renderer.
+
+"scanlines" controls whether there is any emulation of the gaps between display
+lines that are present when driving a CRT television with a 240p signal. This
+emulation is very basic at the moment so this option is off by default.
+
+"vsync" controls whether the drawing of frames is synchronized to the monitor
+refresh rate. Valid values for this setting are "off", "on" and "tear". The
+latter will attempt to use the "late tear" option if it's available and normal
+vsync otherwise. Currently it's recommended to leave this at the default of
+"off" as BlastEm synchronizes to audio and does not yet have the necessary code
+to fully handle conflicts between the audio rate and monitor refresh rate.
+Additionally, the "turbo" feature does not function properly with vsync
+enabled. These issues will be addressed in a future release. If you wish to use
+vsync, please see the VSync section at the bottom of the README.
+
+"fullscreen" controls whether BlastEm starts in fullscreen or windowed mode.
+This can be overridden on the command line with the -f flag. If fullscreen
+is set to "off", -f will turn it on. Conversely, if fullscreen is set to "on"
+in the config, -f will turn it off.
+
+Audio
+-----
+
+The audio section contains settings that affect the audio output of BlastEm.
+
+"rate" selects the preferred sample rate for audio output. Your operating
+system may not accept this value in which case a different rate will be chosen.
+This should generally be either the native sample rate of your sound card or an
+integral divisor of it. Most modern sound cards have a native output rate that
+is a multiple of 48000 Hz so the default setting should work well for most users.
+
+"buffer size" controls how large of a buffer uses for audio data. Smaller values
+will reduce latency, but too small of a value can lead to dropouts. 512 works
+well for me, but a higher or lower value may be more appropriate for your system.
+
+"lowpass_cutoff" controls the cutoff, or knee, frequency of the RC-style
+low-pass filter. The default value of 3390 Hz is supposedly what is present in
+at least some Genesis/Megadrive models. Other models reportedly use an even
+lower value.
+
+Clocks
+------
+
+The clocks section contains settings that affect how fast things run.
+
+"m68k_divider" describes the relationsip between the master clock (which is
+53693175 Hz for NTSC mode and 53203395 Hz for PAL mode). The default value of 7
+matches the real hardware. Set this to a lower number to overclock the 68000
+and set it to a higher number to underclock it.
+
+"max_cycles" controls how often the system is forced to synchronize all
+hardware. BlastEm generally uses a sync on demand approach to synchronizing
+components in the system. This can provide perfect synchronization for most
+components, but since the Z80 can steal cycles from the 68000 at unpredictable
+times 68000/Z80 synchronization is imperfect. The default value of 3420
+corresponds to the number of master clock cycles per line. Larger numbers may
+produce a modest performance improvement whereas smaller numbers will improve
+68000/Z80 synchronization.
+
+"speeds" controls the speed of the overall emulated console at different
+presets. Preset 0 is the default speed and should normally be set to 100. The
+other presets enable the slow/turbo mode functionality.
+
+UI
+--
+
+The UI section contains settings that affect the graphical user interface.
+
+"rom" determines the path of the Genesis/Megadrive ROM that implements the UI.
+Relative paths will be loaded relative to the BlastEm executable.
+
+Other Settings
+--------------
+
+"default_region" determines the console region that will be used when region
+detection fails and when there are multiple valid regions. The default of 'U'
+specifies a 60Hz "foreign" console. 
+
+Debugger
+--------
+
+BlastEm has an integrated command-line debugger loosely based on GDB's
+interface. The interface is very rough at the moment. Available commands in the
+68K debugger are:
+	b ADDRESS            - Set a breakpoint at ADDRESS
+	d BREAKPOINT         - Delete a 68K breakpoint
+	co BREAKPOINT        - Run a list of debugger commands each time
+                           BREAKPOINT is hit
+	a ADDRESS            - Advance to address
+	n                    - Advance to next instruction
+	o                    - Advance to next instruction ignoring branches to
+	                       lower addresses (good for breaking out of loops)
+	s                    - Advance to next instruction (follows bsr/jsr)
+	c                    - Continue
+	bt                   - Print a backtrace
+	p[/(x|X|d|c)] VALUE  - Print a register or memory location
+	di[/(x|X|d|c)] VALUE - Print a register or memory location each time
+						   a breakpoint is hit
+	vs                   - Print VDP sprite list
+	vr                   - Print VDP register info
+	zb ADDRESS           - Set a Z80 breakpoint
+	zp[/(x|X|d|c)] VALUE - Display a Z80 value
+	q                    - Quit BlastEm
+Available commands in the Z80 debugger are:
+	b  ADDRESS           - Set a breakpoint at ADDRESS
+	de BREAKPOINT        - Delete a Z80 breakpoint
+	a  ADDRESS           - Advance to address
+	n                    - Advance to next instruction
+	c                    - Continue
+	p[/(x|X|d|c)] VALUE  - Print a register or memory location
+	di[/(x|X|d|c)] VALUE - Print a register or memory location each time
+						   a breakpoint is hit
+	q                    - Quit BlastEm
+
+The -d flag can be used to cause BlastEm to start in the debugger.
+Alternatively, you can use the ui.enter_debugger action (mapped to the 'u' key
+by default) to enter the debugger while a game is running. To debug the menu
+ROM, use the -dm flag.
+
+GDB Remote Debugging
+--------------------
+
+In addition to the native debugger, BlastEm can also act as a GDB remote
+debugging stub. To use this, you'll want to configure your Makefile to produce
+both an ELF executable and a raw binary. Invoke an m68k-elf targeted gdb with
+the ELF file. Once inside the gdb session, type:
+
+	target remote | BLASTEM_PATH/blastem ROM_FILE.bin -D
+
+where BLASTEM_PATH is the relative or absolute path to your BlastEm
+installation and ROM_FILE.bin is the name of the raw binary for your program.
+BlastEm will halt at the beginning of your program's entry point and return
+control to GDB. This will allow you to set breakpoints before your code runs.
+
+On Windows, the procedure is slightly different. First run 
+	blastem.exe ROM_FILE.bin -D
+This will cause BlastEm to wait for a socket connection on port 1234. It will
+appear to be frozen until gdb connects to it. Now open the ELF file in gdb
+and type:
+
+	target remote :1234
+
+Trace points and watch points are not currently supported.
+
+Included Tools
+--------------
+
+BlastEm ships with a few small utilities that leverage portions of the emulator
+code.
+	
+	dis       - 68K disassembler
+	zdis      - Z80 disassembler
+	vgmplay   - Very basic VGM player
+	stateview - GST save state viewer
+	
+VSync
+-----
+
+This section includes information about using VSync with BlastEm. As mentioned
+above, the code is currently designed to only sync to audio and has some issues
+with VSync as a result. That said, if your computer is fast enough and you
+don't care about turbo mode, it can generally made to work.
+
+The native refresh rate of an NTSC Genesis is approximately 59.92 Hz which is
+probably not the native refresh rate of your monitor. Fortunately, it is
+most likely lower than your refresh rate. As long as this is true, VSync will
+generally work as long as your computer is fast enough to cope with the time
+lost waiting for VSync and the audio buffer is large enough to not run out of
+samples during that delay. Latency will suffer a bit and you'll get a doubled
+frame, but things will be fine.
+
+If you enable VSync and you're getting audio dropouts, first try doubling the
+audio buffer setting. If you still experience dropouts, it's possible your
+computer is not fast enough or that your monitor's actual refresh rate is in
+fact lower than that of the emualted console. Not much can be done about the
+former (apart from disabling VSync), but the latter can be dealt with by
+lowering the default speed slightly in the "clocks" section.
+
+A future release will support VSync in a less hacky fashion.
+
+License
+-------
+
+BlastEm is free software distributed under the terms of the GNU General Public
+License version 3 or higher. This gives you the right to redistribute and/or
+modify the program as long as you follow the terms of the license. See the file
+COPYING for full license details.
+
+Binary releases of BlastEm are packaged with GLEW and SDL2 which have thier own
+licenses. See GLEW-LICENSE and SDL-LICENSE for details.
