@@ -1,4 +1,4 @@
 ## blastem-gtk
-This is an attempt to build a gui for [BlastEm](http://mednafen.sourceforge.net "BlastEm - The fast and accurate Genesis emulator") with GTK+2/3.
+This is an attempt to build a gui for [BlastEm](https://www.retrodev.com/blastem "BlastEm - The fast and accurate Genesis emulator") with [GTK+2/3](https://www.gtk.org "The GTK+ Project") toolkit.
 
-[BlastEm](http://mednafen.sourceforge.net "BlastEm - The fast and accurate Genesis emulator") is an open source, higly accurate emulator for the Genesis/Megadrive by Mike Pavone.
+[BlastEm](https://www.retrodev.com/blastem "BlastEm - The fast and accurate Genesis emulator") is an open source, higly accurate emulator for the Genesis/Megadrive developed by Mike Pavone.
