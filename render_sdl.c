@@ -14,6 +14,10 @@
 #include "util.h"
 #include "ppm.h"
 
+#include <SDL2/SDL_syswm.h>
+#include <gtk/gtk.h>
+#include "gtk_gui.h"
+
 #ifndef DISABLE_OPENGL
 #include <GL/glew.h>
 #endif
@@ -518,6 +522,12 @@ void render_init(int width, int height, char * title, uint8_t fullscreen)
 	}
 	
 	SDL_JoystickEventState(SDL_ENABLE);
+
+	SDL_SysWMinfo info;
+	SDL_VERSION(&info.version);
+
+	if(SDL_GetWindowWMInfo(main_window, &info))
+		create_gui(info.info.x11.window, width, height);
 
 	atexit(render_quit);
 }
@@ -1060,6 +1070,9 @@ static void drain_events()
 
 void process_events()
 {
+	while (gtk_events_pending())
+		gtk_main_iteration();
+
 	if (events_processed > MAX_EVENT_POLL_PER_FRAME) {
 		return;
 	}
