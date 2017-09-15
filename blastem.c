@@ -250,6 +250,9 @@ void load(char *romfname)
 	uint8_t fullscreen = FULLSCREEN_DEFAULT, use_gl = 1;
 	uint8_t debug_target = 0;
 
+  if(current_system)
+    current_system->request_exit(current_system);
+
 	uint8_t menu = !loaded;
 	if (!loaded) {
 		//load menu
