@@ -348,7 +348,7 @@ static uint32_t overscan_left[NUM_VID_STD] = {13, 13};
 static uint32_t overscan_right[NUM_VID_STD] = {14, 14};
 static vid_std video_standard = VID_NTSC;
 static char *vid_std_names[NUM_VID_STD] = {"ntsc", "pal"};
-void render_init(int width, int height, char * title, uint8_t fullscreen)
+unsigned long render_init(int width, int height, char * title, uint8_t fullscreen)
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
 		fatal_error("Unable to init SDL: %s\n", SDL_GetError());
@@ -523,13 +523,14 @@ void render_init(int width, int height, char * title, uint8_t fullscreen)
 	
 	SDL_JoystickEventState(SDL_ENABLE);
 
+	atexit(render_quit);
+
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
 
 	if(SDL_GetWindowWMInfo(main_window, &info))
-		gui_add_id(info.info.x11.window);
-
-	atexit(render_quit);
+		return info.info.x11.window;
+  else return 0;
 }
 
 void render_set_video_standard(vid_std std)

@@ -75,7 +75,7 @@ uint32_t render_map_color(uint8_t r, uint8_t g, uint8_t b);
 void render_save_screenshot(char *path);
 uint32_t *render_get_framebuffer(uint8_t which, int *pitch);
 void render_framebuffer_updated(uint8_t which, int width);
-void render_init(int width, int height, char * title, uint8_t fullscreen);
+unsigned long render_init(int width, int height, char * title, uint8_t fullscreen);
 void render_set_video_standard(vid_std std);
 void render_toggle_fullscreen();
 void render_update_caption(char *title);

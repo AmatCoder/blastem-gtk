@@ -1,14 +1,11 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkx.h>
 
-GMainLoop *gloop;
-GtkWidget *socket;
-char* rom = NULL;
+#include "blastem.h"
 
 static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
-  if (g_main_loop_is_running (gloop))
-    g_main_loop_quit (gloop);
+  gtk_main_quit();
 
   return FALSE;
 }
@@ -17,14 +14,14 @@ void quit_gui(GtkMenuItem *menuitem, gpointer data)
 {
   gtk_widget_destroy(GTK_WIDGET(data));
 
-  if (g_main_loop_is_running (gloop))
-    g_main_loop_quit (gloop);
+  gtk_main_quit();
 }
 
 void show_chooser(GtkMenuItem *menuitem, gpointer data)
 {
   GtkWidget *exe;
   GtkWidget *dialog;
+  char* rom = NULL;
 
   dialog = gtk_file_chooser_dialog_new(
     "Choose a rom...", GTK_WINDOW(data),
@@ -43,18 +40,14 @@ void show_chooser(GtkMenuItem *menuitem, gpointer data)
 
   gtk_widget_destroy (dialog);
 
-  if ((g_main_loop_is_running (gloop)) && (rom != NULL))
-    g_main_loop_quit (gloop);
+  if (rom)
+    load(rom);
 }
 
-void gui_add_id(Window XID)
-{
-  gtk_socket_add_id(GTK_SOCKET(socket), XID);
-}
-
-char* create_gui(int width, int height)
+void create_gui(unsigned long XID, int width, int height)
 {
   GtkWidget *window;
+  GtkWidget *socket;
 
   GtkWidget *vbox;
   GtkWidget *menubar;
@@ -64,8 +57,6 @@ char* create_gui(int width, int height)
   GtkWidget *quit;
 
   gtk_init(NULL, NULL);
-
-  gloop = g_main_loop_new (NULL, FALSE);
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   socket = gtk_socket_new();
@@ -96,9 +87,9 @@ char* create_gui(int width, int height)
   GdkRGBA bg = { 0, 0, 0, 1 };
   gtk_widget_override_background_color(socket, GTK_STATE_FLAG_NORMAL, &bg);
 
+  gtk_socket_add_id(GTK_SOCKET(socket), XID);
+
   gtk_widget_show_all(window);
 
-  g_main_loop_run (gloop);
-
-  return rom;
+  gtk_main();
 }

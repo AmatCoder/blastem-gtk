@@ -18,5 +18,6 @@ extern uint8_t use_native_states;
 #define QUICK_SAVE_SLOT 10
 void reload_media(void);
 void lockon_media(char *lock_on_path);
+void load(char *romfname);
 
 #endif //BLASTEM_H_

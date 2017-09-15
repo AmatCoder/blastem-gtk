@@ -3,7 +3,6 @@
 
 #include <gtk/gtkx.h>
 
-void gui_add_id(Window XID);
-char* create_gui(int width, int height);
+void create_gui(unsigned long XID, int width, int height);
 
 #endif //GTK_GUI_H_
