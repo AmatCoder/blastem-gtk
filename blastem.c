@@ -25,6 +25,8 @@
 #include "config.h"
 #include "menu.h"
 
+#include "gtk_gui.h"
+
 #define BLASTEM_VERSION "0.5.2-pre"
 
 #ifdef __ANDROID__
@@ -381,12 +383,15 @@ int main(int argc, char ** argv)
 			height = atoi(argv[i]);
 		}
 	}
+
+  romfname = create_gui(640, 480);
+
 	uint8_t menu = !loaded;
 	if (!loaded) {
 		//load menu
-		romfname = tern_find_path(config, "ui\0rom\0", TVAL_PTR).ptrval;
+		//romfname = tern_find_path(config, "ui\0rom\0", TVAL_PTR).ptrval;
 		if (!romfname) {
-			romfname = "menu.bin";
+			exit(0);
 		}
 		if (is_absolute_path(romfname)) {
 			if (!(cart.size = load_rom(romfname, &cart.buffer, &stype))) {

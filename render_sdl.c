@@ -362,7 +362,7 @@ void render_init(int width, int height, char * title, uint8_t fullscreen)
 	windowed_width = width;
 	windowed_height = height;
 	
-	uint32_t flags = SDL_WINDOW_RESIZABLE;
+	uint32_t flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
 
 	if (fullscreen) {
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
@@ -527,7 +527,7 @@ void render_init(int width, int height, char * title, uint8_t fullscreen)
 	SDL_VERSION(&info.version);
 
 	if(SDL_GetWindowWMInfo(main_window, &info))
-		create_gui(info.info.x11.window, width, height);
+		gui_add_id(info.info.x11.window);
 
 	atexit(render_quit);
 }
