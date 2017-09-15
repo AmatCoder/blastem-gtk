@@ -714,13 +714,17 @@ void render_framebuffer_updated(uint8_t which, int width)
 					fps_caption = malloc(strlen(caption) + strlen(" - 100000000.1 fps") + 1);
 				}
 				sprintf(fps_caption, "%s - %.1f fps", caption, ((float)frame_counter) / (((float)(last_frame-start)) / 1000.0));
-				SDL_SetWindowTitle(main_window, fps_caption);
+				gtk_window_set_title(GTK_WINDOW(topwindow), fps_caption);
 	#endif
 			}
 			start = last_frame;
 			frame_counter = 0;
 		}
 	}
+
+	while (gtk_events_pending())
+		gtk_main_iteration();
+
 	if (!events_processed) {
 		process_events();
 	}
@@ -1071,9 +1075,6 @@ static void drain_events()
 
 void process_events()
 {
-	while (gtk_events_pending())
-		gtk_main_iteration();
-
 	if (events_processed > MAX_EVENT_POLL_PER_FRAME) {
 		return;
 	}

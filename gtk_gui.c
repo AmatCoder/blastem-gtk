@@ -3,6 +3,8 @@
 
 #include "blastem.h"
 
+GtkWidget* topwindow;
+
 static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
   gtk_main_quit();
@@ -54,7 +56,6 @@ void show_chooser(GtkMenuItem *menuitem, gpointer data)
 
 void create_gui(unsigned long XID, int width, int height)
 {
-  GtkWidget *window;
   GtkWidget *frame;
   GtkWidget *socket;
 
@@ -67,7 +68,7 @@ void create_gui(unsigned long XID, int width, int height)
 
   gtk_init(NULL, NULL);
 
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  topwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   frame = gtk_frame_new (NULL);
   socket = gtk_socket_new();
   vbox = gtk_vbox_new(FALSE, 0);
@@ -85,12 +86,12 @@ void create_gui(unsigned long XID, int width, int height)
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
 
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
-  gtk_container_add(GTK_CONTAINER(window), vbox);
+  gtk_container_add(GTK_CONTAINER(topwindow), vbox);
   gtk_container_add(GTK_CONTAINER(vbox), frame);
   gtk_container_add (GTK_CONTAINER (frame), socket);
 
-  g_signal_connect(window, "delete-event", G_CALLBACK(delete_event), NULL);
-  g_signal_connect(quit, "activate", G_CALLBACK(quit_gui), window);
+  g_signal_connect(topwindow, "delete-event", G_CALLBACK(delete_event), NULL);
+  g_signal_connect(quit, "activate", G_CALLBACK(quit_gui), topwindow);
   g_signal_connect(open, "activate", G_CALLBACK(show_chooser), socket);
 
   gtk_widget_set_size_request(socket, width, height);
@@ -100,7 +101,7 @@ void create_gui(unsigned long XID, int width, int height)
 
   gtk_socket_add_id(GTK_SOCKET(socket), XID);
 
-  gtk_widget_show_all(window);
+  gtk_widget_show_all(topwindow);
   gtk_widget_hide(socket);
 
   gtk_main();
