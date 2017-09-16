@@ -9,17 +9,20 @@ GtkWidget *menubar;
 
 static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
+  running = 1;
   return FALSE;
 }
 
 void quit_gui(GtkMenuItem *menuitem, gpointer data)
 {
   gtk_widget_destroy(GTK_WIDGET(data));
+  running = 1;
 }
 
 void set_fs(GtkMenuItem *menuitem, gpointer data)
 {
-  render_toggle_fullscreen();
+  if (running == 1)
+    render_toggle_fullscreen();
 }
 
 void show_chooser(GtkMenuItem *menuitem, gpointer data)

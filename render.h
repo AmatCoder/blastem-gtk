@@ -69,7 +69,7 @@ typedef enum {
 #define RENDER_NOT_MAPPED -2
 #define RENDER_NOT_PLUGGED_IN -3
 
-typedef void (*drop_handler)(const char *filename);
+typedef void (*drop_handler)(char *filename);
 
 extern uint8_t running;
 extern SDL_Window *main_window;

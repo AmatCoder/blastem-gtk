@@ -185,24 +185,9 @@ void setup_saves(system_media *media, rom_info *info, system_header *context)
 	}
 }
 
-static void on_drag_drop(const char *filename)
+static void on_drag_drop(char *filename)
 {
-	if (current_system->next_rom) {
-		free(current_system->next_rom);
-	}
-	current_system->next_rom = strdup(filename);
-	current_system->request_exit(current_system);
-	if (menu_system && menu_system->type == SYSTEM_GENESIS) {
-		genesis_context *gen = (genesis_context *)menu_system;
-		if (gen->extra) {
-			menu_context *menu = gen->extra;
-			menu->external_game_load = 1;
-		} else {
-			puts("No extra");
-		}
-	} else {
-		puts("no menu");
-	}
+	load(filename);
 }
 
 static system_media cart, lock_on;
@@ -560,10 +545,22 @@ int main(int argc, char ** argv)
 
 	while (!running)
 	{
+		SDL_Event event;
+		while(SDL_PollEvent(&event))
+		{
+			if (event.type == SDL_DROPFILE){
+			if (on_drag_drop) {
+				on_drag_drop(event.drop.file);
+				}
+			SDL_free(event.drop.file);
+			}
+		}
+
 		SDL_GL_SwapWindow(main_window);
 
 		while (gtk_events_pending())
 			gtk_main_iteration();
 	}
+
 	return 0;
 }
