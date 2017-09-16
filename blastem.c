@@ -553,10 +553,10 @@ int main(int argc, char ** argv)
 	}
 
 	if (!headless) {
-		XID = render_init(width, height, "BlastEm", fullscreen);
+		XID = render_init(width, height, "BlastEm", 0);
 		render_set_drag_drop_handler(on_drag_drop);
 	}
-	create_gui(XID, romfname, width, height);
+	create_gui(XID, fullscreen, romfname, width, height);
 
 	while (!running)
 	{

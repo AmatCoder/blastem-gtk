@@ -50,7 +50,7 @@ void show_chooser(GtkMenuItem *menuitem, gpointer data)
     load(rom);
 }
 
-void create_gui(unsigned long XID, char* romfname, int width, int height)
+void create_gui(unsigned long XID, int fullscreen, char* romfname, int width, int height)
 {
   GtkWidget *socket;
 
@@ -97,7 +97,7 @@ void create_gui(unsigned long XID, char* romfname, int width, int height)
   g_signal_connect(topwindow, "delete-event", G_CALLBACK(delete_event), NULL);
   g_signal_connect(quit, "activate", G_CALLBACK(quit_gui), topwindow);
   g_signal_connect(open, "activate", G_CALLBACK(show_chooser), socket);
-  g_signal_connect(fs, "activate", G_CALLBACK(set_fs), menubar);
+  g_signal_connect(fs, "activate", G_CALLBACK(set_fs), NULL);
 
   if (height <= 0) {
     float aspect = config_aspect() > 0.0f ? config_aspect() : 4.0f/3.0f;
@@ -110,6 +110,9 @@ void create_gui(unsigned long XID, char* romfname, int width, int height)
 
   gtk_window_set_title(GTK_WINDOW(topwindow), "BlastEm");
   gtk_widget_show_all(topwindow);
+
+  if (fullscreen)
+    set_fs(NULL, NULL); 
 
   if (romfname)
     load(romfname);
