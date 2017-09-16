@@ -9,16 +9,12 @@ GtkWidget *menubar;
 
 static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
-  gtk_main_quit();
-
   return FALSE;
 }
 
 void quit_gui(GtkMenuItem *menuitem, gpointer data)
 {
   gtk_widget_destroy(GTK_WIDGET(data));
-
-  gtk_main_quit();
 }
 
 void set_fs(GtkMenuItem *menuitem, gpointer data)
