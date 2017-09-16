@@ -4,6 +4,7 @@
 #include <gtk/gtkx.h>
 
 extern GtkWidget* topwindow;
+extern GtkWidget* menubar;
 
 void create_gui(unsigned long XID, char* romfname, int width, int height);
 

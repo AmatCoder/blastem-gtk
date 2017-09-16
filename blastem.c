@@ -558,5 +558,12 @@ int main(int argc, char ** argv)
 	}
 	create_gui(XID, romfname, width, height);
 
+	while (!running)
+	{
+		SDL_GL_SwapWindow(main_window);
+
+		while (gtk_events_pending())
+			gtk_main_iteration();
+	}
 	return 0;
 }

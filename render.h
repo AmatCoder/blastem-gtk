@@ -71,6 +71,9 @@ typedef enum {
 
 typedef void (*drop_handler)(const char *filename);
 
+extern uint8_t running;
+extern SDL_Window *main_window;
+
 uint32_t render_map_color(uint8_t r, uint8_t g, uint8_t b);
 void render_save_screenshot(char *path);
 uint32_t *render_get_framebuffer(uint8_t which, int *pitch);
@@ -91,6 +94,7 @@ void process_events();
 int render_width();
 int render_height();
 int render_fullscreen();
+void render_toggle_fullscreen();
 void render_set_drag_drop_handler(drop_handler handler);
 void process_events();
 int32_t render_translate_input_name(int32_t controller, char *name, uint8_t is_axis);

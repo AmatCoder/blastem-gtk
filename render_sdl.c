@@ -24,7 +24,7 @@
 
 #define MAX_EVENT_POLL_PER_FRAME 2
 
-static SDL_Window *main_window;
+SDL_Window *main_window;
 static SDL_Renderer *main_renderer;
 static SDL_Texture  **sdl_textures;
 static uint8_t num_textures;
@@ -50,6 +50,7 @@ static SDL_cond * psg_cond;
 static SDL_cond * ym_cond;
 static uint8_t quitting = 0;
 static uint8_t ym_enabled = 1;
+uint8_t running;
 
 static void audio_callback(void * userdata, uint8_t *byte_stream, int len)
 {
@@ -354,6 +355,7 @@ unsigned long render_init(int width, int height, char * title, uint8_t fullscree
 		fatal_error("Unable to init SDL: %s\n", SDL_GetError());
 	}
 	atexit(SDL_Quit);
+	running = 0;
 	if (height <= 0) {
 		float aspect = config_aspect() > 0.0f ? config_aspect() : 4.0f/3.0f;
 		height = ((float)width / aspect) + 0.5f;
@@ -620,6 +622,7 @@ void render_framebuffer_updated(uint8_t which, int width)
 		shot_height = video_standard == VID_NTSC ? 243 : 294;
 		shot_width = width;
 	}
+	running = 1;
 	width -= overscan_left[video_standard] + overscan_right[video_standard];
 #ifndef DISABLE_OPENGL
 	if (render_gl && which <= FRAMEBUFFER_EVEN) {
@@ -1104,6 +1107,8 @@ void render_toggle_fullscreen()
 	drain_events();
 	is_fullscreen = !is_fullscreen;
 	if (is_fullscreen) {
+		gtk_widget_hide(menubar);
+		gtk_window_fullscreen(GTK_WINDOW(topwindow));
 		SDL_DisplayMode mode;
 		//TODO: Multiple monitor support
 		SDL_GetCurrentDisplayMode(0, &mode);
@@ -1112,6 +1117,11 @@ void render_toggle_fullscreen()
 		//This needs to happen before the fullscreen transition to have any effect
 		//because SDL does not apply window size changes in fullscreen
 		SDL_SetWindowSize(main_window, mode.w, mode.h);
+	}
+	else
+	{
+		gtk_window_unfullscreen(GTK_WINDOW(topwindow));
+		gtk_widget_show(menubar);
 	}
 	SDL_SetWindowFullscreen(main_window, is_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 	//Since we change the window size on transition to full screen
