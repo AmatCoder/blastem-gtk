@@ -86,6 +86,7 @@ void render_disable_ym();
 void render_enable_ym();
 uint32_t render_audio_buffer();
 uint32_t render_sample_rate();
+float config_aspect();
 void process_events();
 int render_width();
 int render_height();

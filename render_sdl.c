@@ -285,7 +285,7 @@ static void render_quit()
 	}
 }
 
-static float config_aspect()
+float config_aspect()
 {
 	static float aspect = 0.0f;
 	if (aspect == 0.0f) {

@@ -390,6 +390,7 @@ int main(int argc, char ** argv)
 	int loaded = 0;
 	system_type stype = SYSTEM_UNKNOWN, force_stype = SYSTEM_UNKNOWN;
 	uint8_t force_region = 0;
+	char * romfname = NULL;
 	char * statefile = NULL;
 	debugger_type dtype = DEBUGGER_NATIVE;
 	uint8_t start_in_debugger = 0;
@@ -519,6 +520,7 @@ int main(int argc, char ** argv)
 			cart.dir = path_dirname(argv[i]);
 			cart.name = basename_no_extension(argv[i]);
 			cart.extension = path_extension(argv[i]);
+			romfname = argv[i];
 			loaded = 1;
 		} else if (width < 0) {
 			width = atoi(argv[i]);
@@ -554,7 +556,7 @@ int main(int argc, char ** argv)
 		XID = render_init(width, height, "BlastEm", fullscreen);
 		render_set_drag_drop_handler(on_drag_drop);
 	}
-	create_gui(XID, 640, 480);
+	create_gui(XID, romfname, width, height);
 
 	return 0;
 }

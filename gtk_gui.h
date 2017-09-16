@@ -5,6 +5,6 @@
 
 extern GtkWidget* topwindow;
 
-void create_gui(unsigned long XID, int width, int height);
+void create_gui(unsigned long XID, char* romfname, int width, int height);
 
 #endif //GTK_GUI_H_

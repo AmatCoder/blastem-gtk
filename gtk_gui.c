@@ -2,6 +2,7 @@
 #include <gtk/gtkx.h>
 
 #include "blastem.h"
+#include "render.h"
 
 GtkWidget* topwindow;
 
@@ -17,6 +18,15 @@ void quit_gui(GtkMenuItem *menuitem, gpointer data)
   gtk_widget_destroy(GTK_WIDGET(data));
 
   gtk_main_quit();
+}
+
+void show_socket(gpointer data)
+{
+  gtk_widget_show(data);
+
+  gtk_widget_set_can_focus (data, TRUE);
+  gtk_widget_grab_focus (data);
+  gtk_widget_set_can_focus (data, FALSE);
 }
 
 void show_chooser(GtkMenuItem *menuitem, gpointer data)
@@ -44,17 +54,13 @@ void show_chooser(GtkMenuItem *menuitem, gpointer data)
 
   gtk_widget_destroy (dialog);
 
-  gtk_widget_show(data);
-
-  gtk_widget_set_can_focus (data, TRUE);
-  gtk_widget_grab_focus (data);
-  gtk_widget_set_can_focus (data, FALSE);
+  show_socket(data);
 
   if (rom)
     load(rom);
 }
 
-void create_gui(unsigned long XID, int width, int height)
+void create_gui(unsigned long XID, char* romfname, int width, int height)
 {
   GtkWidget *frame;
   GtkWidget *socket;
@@ -94,6 +100,10 @@ void create_gui(unsigned long XID, int width, int height)
   g_signal_connect(quit, "activate", G_CALLBACK(quit_gui), topwindow);
   g_signal_connect(open, "activate", G_CALLBACK(show_chooser), socket);
 
+  if (height <= 0) {
+    float aspect = config_aspect() > 0.0f ? config_aspect() : 4.0f/3.0f;
+    height = ((float)width / aspect) + 0.5f;
+  }
   gtk_widget_set_size_request(socket, width, height);
 
   GdkRGBA bg = { 0, 0, 0, 1 };
@@ -101,8 +111,16 @@ void create_gui(unsigned long XID, int width, int height)
 
   gtk_socket_add_id(GTK_SOCKET(socket), XID);
 
+  gtk_window_set_title(GTK_WINDOW(topwindow), "BlastEm");
   gtk_widget_show_all(topwindow);
+
   gtk_widget_hide(socket);
+
+  if (romfname)
+  {
+    show_socket(socket);
+    load(romfname);
+  }
 
   gtk_main();
 }
