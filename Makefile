@@ -157,14 +157,14 @@ ifeq ($(OS),Windows)
 MAINOBJS+= res.o
 endif
 
-ALL=dis$(EXE) zdis$(EXE) stateview$(EXE) vgmplay$(EXE) blastem$(EXE)
+ALL=blastem-gtk$(EXE)
 ifneq ($(OS),Windows)
 ALL+= termhelper
 endif
 
 all : $(ALL)
 
-blastem$(EXE) : $(MAINOBJS)
+blastem-gtk$(EXE) : $(MAINOBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 	$(FIXUP) ./$@
 	
