@@ -31,7 +31,7 @@ EXE:=
 ifeq ($(OS),Darwin)
 LIBS=sdl2 glew
 else
-LIBS=sdl2 glew gl gtk+-3.0
+LIBS=sdl2 glew gl
 endif #Darwin
 
 HAS_PROC:=$(shell if [ -d /proc ]; then /bin/echo -e -DHAS_PROC; fi)
@@ -54,6 +54,12 @@ LDFLAGS+= -Wl,-rpath='$$ORIGIN/lib' -Llib -lSDL2 $(shell pkg-config --libs gl)
 endif #Darwin
 
 else
+ifdef GTK2
+LIBS+= gtk+-2.0
+CFLAGS+= -DGTK2
+else
+LIBS+= gtk+-3.0
+endif #GTK2
 CFLAGS:=$(shell pkg-config --cflags-only-I $(LIBS)) $(CFLAGS)
 LDFLAGS:=-lm $(shell pkg-config --libs $(LIBS))
 

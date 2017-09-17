@@ -1,5 +1,8 @@
 #include <gtk/gtk.h>
-#include <gtk/gtkx.h>
+
+#ifndef GTK2
+  #include <gtk/gtkx.h>
+#endif
 
 #include "blastem.h"
 #include "render.h"

@@ -1,7 +1,11 @@
 #ifndef GTK_GUI_H_
 #define GTK_GUI_H_
 
-#include <gtk/gtkx.h>
+#ifdef GTK2
+  #include <gtk/gtk.h>
+#else
+  #include <gtk/gtkx.h>
+#endif
 
 extern GtkWidget* topwindow;
 extern GtkWidget* menubar;
