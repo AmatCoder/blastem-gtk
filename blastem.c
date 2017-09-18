@@ -383,6 +383,7 @@ void load(char *romfname)
 int main(int argc, char ** argv)
 {
 	set_exe_str(argv[0]);
+	config = load_config();
 	int width = -1;
 	int height = -1;
 	int debug = 0;
