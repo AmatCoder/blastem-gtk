@@ -53,7 +53,14 @@ void show_chooser(GtkMenuItem *menuitem, gpointer data)
   gtk_widget_destroy (dialog);
 
   if (rom)
-    load(rom);
+  {
+    if (running)
+    {
+      current_system->next_rom = rom;
+      current_system->request_exit(current_system);
+    }
+    else load(rom);
+  }
 }
 
 void create_gui(unsigned long XID, int fullscreen, char* romfname, int width, int height)

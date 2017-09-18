@@ -185,9 +185,24 @@ void setup_saves(system_media *media, rom_info *info, system_header *context)
 	}
 }
 
-static void on_drag_drop(char *filename)
+static void on_drag_drop(const char *filename)
 {
-	load(filename);
+	if (current_system->next_rom) {
+		free(current_system->next_rom);
+	}
+	current_system->next_rom = strdup(filename);
+	current_system->request_exit(current_system);
+	if (menu_system && menu_system->type == SYSTEM_GENESIS) {
+		genesis_context *gen = (genesis_context *)menu_system;
+		if (gen->extra) {
+			menu_context *menu = gen->extra;
+			menu->external_game_load = 1;
+		} else {
+			puts("No extra");
+		}
+	} else {
+		puts("no menu");
+	}
 }
 
 static system_media cart, lock_on;
@@ -238,7 +253,7 @@ void load(char *romfname)
   if(current_system)
     current_system->request_exit(current_system);
 
-	uint8_t menu = !loaded;
+	uint8_t menu = 0;
 	if (!loaded) {
 		//load menu
 		//romfname = tern_find_path(config, "ui\0rom\0", TVAL_PTR).ptrval;
@@ -550,7 +565,7 @@ int main(int argc, char ** argv)
 		{
 			if (event.type == SDL_DROPFILE){
 			if (on_drag_drop) {
-				on_drag_drop(event.drop.file);
+				load(event.drop.file);
 				}
 			SDL_free(event.drop.file);
 			}
