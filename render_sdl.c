@@ -50,7 +50,6 @@ static SDL_cond * psg_cond;
 static SDL_cond * ym_cond;
 static uint8_t quitting = 0;
 static uint8_t ym_enabled = 1;
-uint8_t running;
 
 static void audio_callback(void * userdata, uint8_t *byte_stream, int len)
 {
@@ -355,7 +354,6 @@ unsigned long render_init(int width, int height, char * title, uint8_t fullscree
 		fatal_error("Unable to init SDL: %s\n", SDL_GetError());
 	}
 	atexit(SDL_Quit);
-	running = 0;
 	if (height <= 0) {
 		float aspect = config_aspect() > 0.0f ? config_aspect() : 4.0f/3.0f;
 		height = ((float)width / aspect) + 0.5f;
@@ -622,7 +620,6 @@ void render_framebuffer_updated(uint8_t which, int width)
 		shot_height = video_standard == VID_NTSC ? 243 : 294;
 		shot_width = width;
 	}
-	running = 1;
 	width -= overscan_left[video_standard] + overscan_right[video_standard];
 #ifndef DISABLE_OPENGL
 	if (render_gl && which <= FRAMEBUFFER_EVEN) {

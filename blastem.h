@@ -8,6 +8,7 @@ extern int headless;
 extern int exit_after;
 extern int z80_enabled;
 extern int frame_limit;
+extern int running;
 
 extern tern_node * config;
 extern system_header *current_system;

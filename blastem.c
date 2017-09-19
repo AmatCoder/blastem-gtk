@@ -40,6 +40,7 @@ int exit_after = 0;
 int z80_enabled = 1;
 int frame_limit = 0;
 uint8_t use_native_states = 1;
+int running = 0;
 
 tern_node * config;
 
@@ -307,7 +308,7 @@ void load(char *romfname)
 	} else {
 		game_system = current_system;
 	}
-
+	running = 1;
 	current_system->debugger_type = dtype;
 	current_system->enter_debugger = start_in_debugger && menu == debug_target;
 	current_system->start_context(current_system,  menu ? NULL : statefile);
@@ -515,12 +516,6 @@ int main(int argc, char ** argv)
 				fatal_error("Unrecognized switch %s\n", argv[i]);
 			}
 		} else if (!loaded) {
-			if (!(cart.size = load_rom(argv[i], &cart.buffer, stype == SYSTEM_UNKNOWN ? &stype : NULL))) {
-				fatal_error("Failed to open %s for reading\n", argv[i]);
-			}
-			cart.dir = path_dirname(argv[i]);
-			cart.name = basename_no_extension(argv[i]);
-			cart.extension = path_extension(argv[i]);
 			romfname = argv[i];
 			loaded = 1;
 		} else if (width < 0) {
@@ -556,8 +551,11 @@ int main(int argc, char ** argv)
 	if (!headless) {
 		XID = render_init(width, height, "BlastEm", 0);
 		render_set_drag_drop_handler(on_drag_drop);
+		create_gui(XID, fullscreen, width, height);
 	}
-	create_gui(XID, fullscreen, romfname, width, height);
+
+  if (romfname)
+    load(romfname);
 
 	while (!running)
 	{
@@ -571,13 +569,11 @@ int main(int argc, char ** argv)
 			SDL_free(event.drop.file);
 			}
 		}
-
 		SDL_GL_SwapWindow(main_window);
+		SDL_Delay(10);
 
 		while (gtk_events_pending())
 			gtk_main_iteration();
-
-		SDL_Delay(10);
 	}
 
 	return 0;

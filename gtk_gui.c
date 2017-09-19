@@ -63,7 +63,7 @@ void show_chooser(GtkMenuItem *menuitem, gpointer data)
   }
 }
 
-void create_gui(unsigned long XID, int fullscreen, char* romfname, int width, int height)
+void create_gui(unsigned long XID, int fullscreen, int width, int height)
 {
   GtkWidget *socket;
 
@@ -126,7 +126,4 @@ void create_gui(unsigned long XID, int fullscreen, char* romfname, int width, in
 
   if (fullscreen)
     set_fs(NULL, NULL); 
-
-  if (romfname)
-    load(romfname);
 }
