@@ -72,6 +72,7 @@ typedef enum {
 typedef void (*drop_handler)(const char *filename);
 
 extern SDL_Window *main_window;
+extern uint8_t scanlines;
 
 uint32_t render_map_color(uint8_t r, uint8_t g, uint8_t b);
 void render_save_screenshot(char *path);

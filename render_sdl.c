@@ -34,7 +34,7 @@ static SDL_GLContext *main_context;
 static int main_width, main_height, windowed_width, windowed_height, is_fullscreen;
 
 static uint8_t render_gl = 1;
-static uint8_t scanlines = 0;
+uint8_t scanlines = 0;
 
 static uint32_t last_frame = 0;
 

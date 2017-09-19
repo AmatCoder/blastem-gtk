@@ -22,6 +22,11 @@ void quit_gui(GtkMenuItem *menuitem, gpointer data)
   running = 1;
 }
 
+void set_sl(GtkMenuItem *menuitem, gpointer data)
+{
+    scanlines = !scanlines;
+}
+
 void set_fs(GtkMenuItem *menuitem, gpointer data)
 {
   if (running == 1)
@@ -75,6 +80,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   GtkWidget *open;
   GtkWidget *quit;
   GtkWidget *fs;
+  GtkWidget *sl;
 
   gtk_init(NULL, NULL);
 
@@ -92,6 +98,8 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
 
   view = gtk_menu_item_new_with_label("View");
   fs = gtk_menu_item_new_with_label("FullScreen");
+  sl = gtk_check_menu_item_new_with_label("Scanlines");
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(sl), scanlines);
 
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), fileMenu);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(view), viewMenu);
@@ -99,6 +107,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   gtk_menu_shell_append(GTK_MENU_SHELL(fileMenu), open);
   gtk_menu_shell_append(GTK_MENU_SHELL(fileMenu), quit);
   gtk_menu_shell_append(GTK_MENU_SHELL(viewMenu), fs);
+  gtk_menu_shell_append(GTK_MENU_SHELL(viewMenu), sl);
 
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), view);
@@ -111,6 +120,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   g_signal_connect(quit, "activate", G_CALLBACK(quit_gui), topwindow);
   g_signal_connect(open, "activate", G_CALLBACK(show_chooser), socket);
   g_signal_connect(fs, "activate", G_CALLBACK(set_fs), NULL);
+  g_signal_connect(sl, "activate", G_CALLBACK(set_sl), NULL);
 
   if (height <= 0) {
     float aspect = config_aspect() > 0.0f ? config_aspect() : 4.0f/3.0f;
