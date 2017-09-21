@@ -308,6 +308,7 @@ void load(char *romfname)
 	} else {
 		game_system = current_system;
 	}
+	enable_menus(G_OBJECT(topwindow));
 	running = 1;
 	current_system->debugger_type = dtype;
 	current_system->enter_debugger = start_in_debugger && menu == debug_target;

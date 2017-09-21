@@ -10,6 +10,7 @@
 extern GtkWidget* topwindow;
 extern GtkWidget* menubar;
 
+void enable_menus(GObject *object);
 void create_gui(unsigned long XID, int fullscreen, int width, int height);
 
 #endif //GTK_GUI_H_
