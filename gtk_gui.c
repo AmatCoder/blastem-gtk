@@ -12,8 +12,8 @@ GtkWidget *menubar;
 
 void enable_menus(GObject *object)
 {
-  GList *list = g_object_get_data(object, "menu_list");
-  GList *l;
+  GSList *list = g_object_get_data(object, "menu_list");
+  GSList *l;
   for (l = list; l != NULL; l = l->next)
   {
     gtk_widget_set_sensitive(GTK_WIDGET(l->data), TRUE);
@@ -90,12 +90,12 @@ void show_chooser(GtkMenuItem *menuitem, gpointer data)
   }
 }
 
-GtkWidget* menu_disable_new(GList **menu_list, const gchar *label)
+GtkWidget* menu_disable_new(GSList **menu_list, const gchar *label)
 {
   GtkWidget* widget;
   widget = gtk_menu_item_new_with_label(label);
   gtk_widget_set_sensitive(widget, FALSE);
-  *menu_list = g_list_append(*menu_list, widget);
+  *menu_list = g_slist_append(*menu_list, widget);
 
   return widget;
 }
@@ -121,7 +121,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   GtkWidget *fullScreen;
   GtkWidget *scanLines;
 
-  GList *menu_list = NULL;
+  GSList *menu_list = NULL;
 
   gtk_init(NULL, NULL);
 
