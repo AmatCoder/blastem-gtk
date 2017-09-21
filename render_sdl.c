@@ -15,7 +15,6 @@
 #include "ppm.h"
 
 #include <SDL2/SDL_syswm.h>
-#include <gtk/gtk.h>
 #include "gtk_gui.h"
 
 #ifndef DISABLE_OPENGL
@@ -1103,9 +1102,8 @@ void render_toggle_fullscreen()
 	
 	drain_events();
 	is_fullscreen = !is_fullscreen;
+	gui_toggle_fullscreen(G_OBJECT(topwindow), is_fullscreen);
 	if (is_fullscreen) {
-		gtk_widget_hide(menubar);
-		gtk_window_fullscreen(GTK_WINDOW(topwindow));
 		SDL_DisplayMode mode;
 		//TODO: Multiple monitor support
 		SDL_GetCurrentDisplayMode(0, &mode);
@@ -1114,11 +1112,6 @@ void render_toggle_fullscreen()
 		//This needs to happen before the fullscreen transition to have any effect
 		//because SDL does not apply window size changes in fullscreen
 		SDL_SetWindowSize(main_window, mode.w, mode.h);
-	}
-	else
-	{
-		gtk_window_unfullscreen(GTK_WINDOW(topwindow));
-		gtk_widget_show(menubar);
 	}
 	SDL_SetWindowFullscreen(main_window, is_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 	//Since we change the window size on transition to full screen

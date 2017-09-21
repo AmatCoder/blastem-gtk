@@ -8,7 +8,21 @@
 #include "render.h"
 
 GtkWidget* topwindow;
-GtkWidget *menubar;
+
+void gui_toggle_fullscreen(GObject *object, int is_fullscreen)
+{
+  GtkWidget *menubar = g_object_get_data(object, "menubar");
+  if (is_fullscreen)
+  {
+    gtk_widget_hide(menubar);
+    gtk_window_fullscreen(GTK_WINDOW(object));
+  }
+  else
+  {
+    gtk_window_unfullscreen(GTK_WINDOW(object));
+    gtk_widget_show(menubar);
+  }
+}
 
 void enable_menus(GObject *object)
 {
@@ -104,6 +118,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
 {
   GtkWidget *socket;
   GtkWidget *vbox;
+  GtkWidget *menubar;
 
   GtkWidget *fileMenu;
   GtkWidget *systemMenu;
@@ -178,6 +193,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   g_signal_connect(reloadMedia, "activate", G_CALLBACK(reloadmedia), NULL);
 
   g_object_set_data_full(G_OBJECT(topwindow), "menu_list", menu_list, (GDestroyNotify) g_list_free);
+  g_object_set_data(G_OBJECT(topwindow), "menubar", menubar);
 
   if (height <= 0) {
     float aspect = config_aspect() > 0.0f ? config_aspect() : 4.0f/3.0f;
