@@ -69,9 +69,31 @@ void set_fullscreen(GtkMenuItem *menuitem, gpointer data)
     render_toggle_fullscreen();
 }
 
+void save_screen(GtkMenuItem *menuitem, gpointer data)
+{
+  GtkWidget *dialog;
+  char* path = NULL;
+
+  dialog = gtk_file_chooser_dialog_new(
+    "Save Screenshot...", GTK_WINDOW(data),
+    GTK_FILE_CHOOSER_ACTION_SAVE, ("_Cancel"),
+    GTK_RESPONSE_CANCEL, ("_Save"), GTK_RESPONSE_ACCEPT,
+    NULL);
+
+  gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER(dialog), TRUE);
+  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(dialog), "untitled.ppm");
+
+  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
+  {
+    path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
+  }
+
+  gtk_widget_destroy (dialog);
+  render_save_screenshot(path);
+}
+
 void show_chooser(GtkMenuItem *menuitem, gpointer data)
 {
-  GtkWidget *exe;
   GtkWidget *dialog;
   char* rom = NULL;
 
@@ -135,6 +157,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   GtkWidget *video;
   GtkWidget *fullScreen;
   GtkWidget *scanLines;
+  GtkWidget *saveScreen;
 
   GSList *menu_list = NULL;
 
@@ -155,19 +178,21 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
 
   system = gtk_menu_item_new_with_label("System");
   softReset = menu_disable_new(&menu_list, "Soft Reset");
-  reloadMedia= menu_disable_new(&menu_list, "Reload Media");
+  reloadMedia= menu_disable_new(&menu_list, "Reload");
 
   video = gtk_menu_item_new_with_label("Video");
   fullScreen = menu_disable_new(&menu_list, "FullScreen");
   scanLines = gtk_check_menu_item_new_with_label("Scanlines");
   gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(scanLines), scanlines);
 
+  saveScreen = menu_disable_new(&menu_list, "Save Screenshot");
+
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), fileMenu);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(system), systemMenu);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(video), videoMenu);
 
   gtk_menu_shell_append(GTK_MENU_SHELL(fileMenu), open);
-  gtk_menu_shell_append(GTK_MENU_SHELL(fileMenu), gtk_separator_menu_item_new ());
+  gtk_menu_shell_append(GTK_MENU_SHELL(fileMenu), gtk_separator_menu_item_new());
   gtk_menu_shell_append(GTK_MENU_SHELL(fileMenu), quit);
 
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), softReset);
@@ -175,6 +200,8 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
 
   gtk_menu_shell_append(GTK_MENU_SHELL(videoMenu), fullScreen);
   gtk_menu_shell_append(GTK_MENU_SHELL(videoMenu), scanLines);
+  gtk_menu_shell_append(GTK_MENU_SHELL(videoMenu), gtk_separator_menu_item_new());
+  gtk_menu_shell_append(GTK_MENU_SHELL(videoMenu), saveScreen);
 
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), system);
@@ -191,6 +218,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   g_signal_connect(scanLines, "activate", G_CALLBACK(set_scanlines), NULL);
   g_signal_connect(softReset, "activate", G_CALLBACK(soft_reset), NULL);
   g_signal_connect(reloadMedia, "activate", G_CALLBACK(reloadmedia), NULL);
+  g_signal_connect(saveScreen, "activate", G_CALLBACK(save_screen), topwindow);
 
   g_object_set_data_full(G_OBJECT(topwindow), "menu_list", menu_list, (GDestroyNotify) g_list_free);
   g_object_set_data(G_OBJECT(topwindow), "menubar", menubar);
