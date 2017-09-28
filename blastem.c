@@ -562,8 +562,13 @@ int main(int argc, char ** argv)
 		create_gui(XID, fullscreen, width, height);
 	}
 
-  if (romfname)
-    load(romfname);
+	if (romfname)
+	{
+		if (fullscreen)
+			render_toggle_fullscreen();
+
+		load(romfname);
+	}
 
 	while (!running)
 	{
