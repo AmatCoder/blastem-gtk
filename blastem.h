@@ -20,5 +20,7 @@ extern uint8_t use_native_states;
 void reload_media(void);
 void lockon_media(char *lock_on_path);
 void load(char *romfname);
+void load_savestate(char *rom, char *state);
+void reset_savestate(void);
 
 #endif //BLASTEM_H_

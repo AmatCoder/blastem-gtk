@@ -109,12 +109,8 @@ uint32_t load_rom(char * filename, void **dst, system_type *stype)
 
 
 int break_on_sync = 0;
+char * statefile = NULL;
 char *save_state_path;
-
-
-
-
-
 char * save_filename;
 system_header *current_system;
 system_header *menu_system;
@@ -237,6 +233,19 @@ void lockon_media(char *lock_on_path)
 	lock_on.size = load_rom(lock_on_path, &lock_on.buffer, NULL);
 }
 
+void reset_savestate(void)
+{
+	free(statefile);
+	statefile = NULL;
+}
+
+void load_savestate(char *rom, char *state)
+{
+	statefile = state;
+	current_system->next_rom = rom;
+	current_system->request_exit(current_system);
+}
+
 void load(char *romfname)
 {
 	config = load_config();
@@ -245,7 +254,6 @@ void load(char *romfname)
 	int loaded = 0;
 	system_type stype = SYSTEM_UNKNOWN, force_stype = SYSTEM_UNKNOWN;
 	uint8_t force_region = 0;
-	char * statefile = NULL;
 	debugger_type dtype = DEBUGGER_NATIVE;
 	uint8_t start_in_debugger = 0;
 	uint8_t fullscreen = FULLSCREEN_DEFAULT, use_gl = 1;
@@ -394,7 +402,6 @@ int main(int argc, char ** argv)
 	system_type stype = SYSTEM_UNKNOWN, force_stype = SYSTEM_UNKNOWN;
 	uint8_t force_region = 0;
 	char * romfname = NULL;
-	char * statefile = NULL;
 	debugger_type dtype = DEBUGGER_NATIVE;
 	uint8_t start_in_debugger = 0;
 	uint8_t fullscreen = FULLSCREEN_DEFAULT, use_gl = 1;

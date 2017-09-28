@@ -75,7 +75,7 @@ void save_screen(GtkMenuItem *menuitem, gpointer data)
   char* path = NULL;
 
   dialog = gtk_file_chooser_dialog_new(
-    "Save Screenshot...", GTK_WINDOW(data),
+    "Save screenshot...", GTK_WINDOW(data),
     GTK_FILE_CHOOSER_ACTION_SAVE, ("_Cancel"),
     GTK_RESPONSE_CANCEL, ("_Save"), GTK_RESPONSE_ACCEPT,
     NULL);
@@ -91,7 +91,7 @@ void save_screen(GtkMenuItem *menuitem, gpointer data)
   render_save_screenshot(path);
 }
 
-void show_chooser(GtkMenuItem *menuitem, gpointer data)
+void open_rom(GtkMenuItem *menuitem, gpointer data)
 {
   GtkWidget *dialog;
   char* rom = NULL;
@@ -114,13 +114,56 @@ void show_chooser(GtkMenuItem *menuitem, gpointer data)
 
   if (rom)
   {
+    g_object_set_data(G_OBJECT(topwindow), "rom", rom);
     if (running)
     {
-      current_system->next_rom = rom;
+      reset_savestate();
+      current_system->next_rom = g_strdup(rom);
       current_system->request_exit(current_system);
     }
     else load(rom);
   }
+}
+
+void gui_load_state(GtkMenuItem *menuitem, gpointer data)
+{
+  GtkWidget *dialog;
+  char *statefile;
+
+  dialog = gtk_file_chooser_dialog_new(
+    "Choose a state file...", GTK_WINDOW(gtk_widget_get_toplevel(data)),
+    GTK_FILE_CHOOSER_ACTION_OPEN, ("_Cancel"),
+    GTK_RESPONSE_CANCEL, ("_Open"), GTK_RESPONSE_ACCEPT,
+    NULL);
+
+  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
+    statefile = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
+
+  gtk_widget_destroy (dialog);
+
+  if (statefile)
+    load_savestate(g_strdup(g_object_get_data(G_OBJECT(topwindow), "rom")), statefile);
+}
+
+void gui_save_state(GtkMenuItem *menuitem, gpointer data)
+{
+  GtkWidget *dialog;
+  char* path = save_state_path;
+
+  dialog = gtk_file_chooser_dialog_new(
+    "Save state file...", GTK_WINDOW(data),
+    GTK_FILE_CHOOSER_ACTION_SAVE, ("_Cancel"),
+    GTK_RESPONSE_CANCEL, ("_Save"), GTK_RESPONSE_ACCEPT,
+    NULL);
+
+  gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER(dialog), TRUE);
+  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(dialog), "untitled.state");
+
+  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
+    save_state_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
+
+  current_system->save_state = QUICK_SAVE_SLOT+1;
+  gtk_widget_destroy (dialog);
 }
 
 void set_speed(GtkMenuItem *menuitem, gpointer data)
@@ -181,6 +224,8 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   GtkWidget *system;
   GtkWidget *softReset;
   GtkWidget *reloadMedia;
+  GtkWidget *loadState;
+  GtkWidget *saveState;
   GtkWidget *setSpeed;
   GtkWidget *setSpeed0;
   GtkWidget *setSpeed1;
@@ -219,6 +264,8 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   softReset = menu_disable_new(&menu_list, "Soft Reset");
   reloadMedia= menu_disable_new(&menu_list, "Reload");
   setSpeed = menu_disable_new(&menu_list, "Speed");
+  loadState = menu_disable_new(&menu_list, "Load State");
+  saveState = menu_disable_new(&menu_list, "Save State");
 
   video = gtk_menu_item_new_with_label("Video");
   fullScreen = menu_disable_new(&menu_list, "FullScreen");
@@ -237,6 +284,9 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
 
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), softReset);
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), reloadMedia);
+  gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), gtk_separator_menu_item_new());
+  gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), loadState);
+  gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), saveState);
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), gtk_separator_menu_item_new());
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), setSpeed);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(setSpeed), speedMenu);
@@ -266,12 +316,14 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
 
   g_signal_connect(topwindow, "delete-event", G_CALLBACK(delete_event), NULL);
   g_signal_connect(quit, "activate", G_CALLBACK(quit_gui), topwindow);
-  g_signal_connect(open, "activate", G_CALLBACK(show_chooser), socket);
+  g_signal_connect(open, "activate", G_CALLBACK(open_rom), socket);
   g_signal_connect(fullScreen, "activate", G_CALLBACK(set_fullscreen), NULL);
   g_signal_connect(scanLines, "activate", G_CALLBACK(set_scanlines), NULL);
   g_signal_connect(softReset, "activate", G_CALLBACK(soft_reset), NULL);
   g_signal_connect(reloadMedia, "activate", G_CALLBACK(reloadmedia), NULL);
   g_signal_connect(saveScreen, "activate", G_CALLBACK(save_screen), topwindow);
+  g_signal_connect(loadState, "activate", G_CALLBACK(gui_load_state), topwindow);
+  g_signal_connect(saveState, "activate", G_CALLBACK(gui_save_state), topwindow);
 
   g_object_set_data_full(G_OBJECT(topwindow), "menu_list", menu_list, (GDestroyNotify) g_list_free);
   g_object_set_data(G_OBJECT(topwindow), "menubar", menubar);
