@@ -567,6 +567,7 @@ int main(int argc, char ** argv)
 		if (fullscreen)
 			render_toggle_fullscreen();
 
+		g_object_set_data(G_OBJECT(topwindow), "rom", romfname);
 		load(romfname);
 	}
 
