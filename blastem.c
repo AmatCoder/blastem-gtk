@@ -477,7 +477,7 @@ int main(int argc, char ** argv)
 				if (i >= argc) {
 					fatal_error("-s must be followed by a savestate filename\n");
 				}
-				statefile = argv[i];
+				statefile = strdup(argv[i]);
 				break;
 			case 't':
 				force_no_terminal();

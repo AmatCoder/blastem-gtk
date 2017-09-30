@@ -46,6 +46,12 @@ void quit_gui(GtkMenuItem *menuitem, gpointer data)
   running = 1;
 }
 
+void set_default_speed()
+{
+  GtkWidget *speed = g_object_get_data(G_OBJECT(topwindow), "default_speed");
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(speed), TRUE);
+}
+
 void soft_reset(GtkMenuItem *menuitem, gpointer data)
 {
     if (running)
@@ -55,7 +61,10 @@ void soft_reset(GtkMenuItem *menuitem, gpointer data)
 void reloadmedia(GtkMenuItem *menuitem, gpointer data)
 {
     if (running)
+    {
+      set_default_speed();
       reload_media();
+    }
 }
 
 void set_scanlines(GtkMenuItem *menuitem, gpointer data)
@@ -117,6 +126,7 @@ void open_rom(GtkMenuItem *menuitem, gpointer data)
     g_object_set_data(G_OBJECT(topwindow), "rom", rom);
     if (running)
     {
+      set_default_speed();
       reset_savestate();
       current_system->next_rom = g_strdup(rom);
       current_system->request_exit(current_system);
@@ -142,7 +152,10 @@ void gui_load_state(GtkMenuItem *menuitem, gpointer data)
   gtk_widget_destroy (dialog);
 
   if (statefile)
+  {
+    set_default_speed();
     load_savestate(g_strdup(g_object_get_data(G_OBJECT(topwindow), "rom")), statefile);
+  }
 }
 
 void gui_save_state(GtkMenuItem *menuitem, gpointer data)
@@ -300,6 +313,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   setSpeed3 = menu_radio_new(speedMenu, &speed_list, 300);
   setSpeed4 = menu_radio_new(speedMenu, &speed_list, 400);
   gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(setSpeed0), TRUE);
+  g_object_set_data(G_OBJECT(topwindow), "default_speed", setSpeed0);
 
   gtk_menu_shell_append(GTK_MENU_SHELL(videoMenu), fullScreen);
   gtk_menu_shell_append(GTK_MENU_SHELL(videoMenu), scanLines);
