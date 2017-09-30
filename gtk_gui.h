@@ -9,6 +9,7 @@
 
 extern GtkWidget* topwindow;
 
+void set_default_speed();
 void gui_toggle_fullscreen(GObject *object, int is_fullscreen);
 void enable_menus(GObject *object);
 void create_gui(unsigned long XID, int fullscreen, int width, int height);

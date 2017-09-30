@@ -184,6 +184,8 @@ void setup_saves(system_media *media, rom_info *info, system_header *context)
 
 static void on_drag_drop(const char *filename)
 {
+	set_default_speed();
+	reset_savestate();
 	if (current_system->next_rom) {
 		free(current_system->next_rom);
 	}
