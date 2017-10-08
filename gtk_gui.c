@@ -9,6 +9,36 @@
 
 GtkWidget* topwindow;
 
+void show_about(GtkMenuItem *menuitem, gpointer data)
+{
+  const char *authors[3] = {"Mike Pavone (Emulator)", "AmatCoder (GUI)", NULL};
+
+  const char *gpl3 =
+"blastem-gtk is free software: you can redistribute it and/or modifyit \
+under the terms of the GNU General Public License as published by \
+the Free Software Foundation, either version 3 of the License, or \
+(at your option) any later version.\n\n\
+blastem-gtk is distributed in the hope that it will be useful, \
+but WITHOUT ANY WARRANTY; without even the implied warranty of \
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the \
+GNU General Public License for more details.\n\n\
+You should have received a copy of the GNU General Public License \
+along with blastem-gtk.  If not, see <http://www.gnu.org/licenses/>.";
+
+
+  gtk_show_about_dialog(GTK_WINDOW(data),
+  "program-name", "blastem-gtk",
+  "version" , "0.5.2-pre",
+  "authors", authors,
+  "copyright", "Copyright \xc2\xa9 2013-2017 Michael Pavone\nCopyright \xc2\xa9 2017 AmatCoder",
+  "comments", "A GTK+ port of BlastEm emulator",
+  "license", gpl3,
+  "wrap-license", TRUE,
+  "website", "https://github.com/AmatCoder/blastem-gtk",
+  "logo", NULL,
+  NULL);
+}
+
 void gui_toggle_fullscreen(GObject *object, int is_fullscreen)
 {
   GtkWidget *menubar = g_object_get_data(object, "menubar");
@@ -229,6 +259,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   GtkWidget *systemMenu;
   GtkWidget *videoMenu;
   GtkWidget *speedMenu;
+  GtkWidget *helpMenu;
 
   GtkWidget *file;
   GtkWidget *open;
@@ -254,6 +285,9 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   GtkWidget *scanLines;
   GtkWidget *saveScreen;
 
+  GtkWidget *help;
+  GtkWidget *about;
+
   GSList *menu_list = NULL;
   GSList *speed_list = NULL;
 
@@ -268,6 +302,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   systemMenu = gtk_menu_new();
   videoMenu = gtk_menu_new();
   speedMenu = gtk_menu_new();
+  helpMenu = gtk_menu_new();
 
   file = gtk_menu_item_new_with_label("File");
   open = gtk_menu_item_new_with_label("Open ROM...");
@@ -284,12 +319,15 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   fullScreen = menu_disable_new(&menu_list, "FullScreen");
   scanLines = gtk_check_menu_item_new_with_label("Scanlines");
   gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(scanLines), scanlines);
-
   saveScreen = menu_disable_new(&menu_list, "Save Screenshot");
+
+  help = gtk_menu_item_new_with_label("Help");
+  about = gtk_menu_item_new_with_label("About");
 
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), fileMenu);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(system), systemMenu);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(video), videoMenu);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), helpMenu);
 
   gtk_menu_shell_append(GTK_MENU_SHELL(fileMenu), open);
   gtk_menu_shell_append(GTK_MENU_SHELL(fileMenu), gtk_separator_menu_item_new());
@@ -320,9 +358,12 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   gtk_menu_shell_append(GTK_MENU_SHELL(videoMenu), gtk_separator_menu_item_new());
   gtk_menu_shell_append(GTK_MENU_SHELL(videoMenu), saveScreen);
 
+  gtk_menu_shell_append(GTK_MENU_SHELL(helpMenu), about);
+
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), system);
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), video);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
   gtk_container_add(GTK_CONTAINER(topwindow), vbox);
@@ -338,6 +379,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   g_signal_connect(saveScreen, "activate", G_CALLBACK(save_screen), topwindow);
   g_signal_connect(loadState, "activate", G_CALLBACK(gui_load_state), topwindow);
   g_signal_connect(saveState, "activate", G_CALLBACK(gui_save_state), topwindow);
+  g_signal_connect(about, "activate", G_CALLBACK(show_about), topwindow);
 
   g_object_set_data_full(G_OBJECT(topwindow), "menu_list", menu_list, (GDestroyNotify) g_list_free);
   g_object_set_data(G_OBJECT(topwindow), "menubar", menubar);
