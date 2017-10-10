@@ -35,7 +35,7 @@ along with blastem-gtk.  If not, see <http://www.gnu.org/licenses/>.";
   "license", gpl3,
   "wrap-license", TRUE,
   "website", "https://github.com/AmatCoder/blastem-gtk",
-  "logo", NULL,
+  "logo", gtk_window_get_icon(GTK_WINDOW(data)),
   NULL);
 }
 
@@ -394,6 +394,7 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   gtk_socket_add_id(GTK_SOCKET(socket), XID);
 
   gtk_window_set_title(GTK_WINDOW(topwindow), "BlastEm");
+  gtk_window_set_icon(GTK_WINDOW(topwindow), gdk_pixbuf_new_from_resource("/org/blastem-gtk/icons/logo-gtk.png", NULL));
   gtk_widget_show_all(topwindow);
 
   if (fullscreen)

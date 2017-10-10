@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/blastem-gtk">
+    <file preprocess="to-pixdata">icons/logo-gtk.png</file>
+  </gresource>
+</gresources>
