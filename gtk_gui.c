@@ -137,26 +137,53 @@ void save_screen(GtkMenuItem *menuitem, gpointer data)
   render_save_screenshot(path);
 }
 
-void open_rom(GtkMenuItem *menuitem, gpointer data)
+char* get_file_chooser(gpointer data)
 {
+#ifdef G_OS_WIN32
+  OPENFILENAME ofn;
+  char szFile[MAX_PATH] = "";
+
+  ZeroMemory(&ofn, sizeof(ofn));
+  ofn.lStructSize = sizeof(ofn);
+  ofn.hwndOwner = NULL  ;
+  ofn.lpstrFile = szFile ;
+  ofn.lpstrFile[0] = '\0';
+  ofn.nMaxFile = MAX_PATH;
+  ofn.lpstrFilter = "All\0*.*\0";
+  ofn.nFilterIndex = 1;
+  ofn.lpstrFileTitle = NULL ;
+  ofn.nMaxFileTitle = 0 ;
+  ofn.lpstrInitialDir = NULL ;
+  ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST ;
+
+  if(GetOpenFileName(&ofn))
+  {
+    char *result = (char *)malloc(MAX_PATH+1);
+    strcpy(result, szFile);
+    return result;
+  }
+  else return NULL;
+#else
   GtkWidget *dialog;
   char* rom = NULL;
 
   dialog = gtk_file_chooser_dialog_new(
-    "Choose a ROM...", GTK_WINDOW(data),
+    "Choose a file...", GTK_WINDOW(data),
     GTK_FILE_CHOOSER_ACTION_OPEN, ("_Cancel"),
     GTK_RESPONSE_CANCEL, ("_Open"), GTK_RESPONSE_ACCEPT,
     NULL);
-
-  //GtkFileFilter* filter = gtk_file_filter_new();
-  //gtk_file_filter_add_pattern(filter, "*.*");
-  //gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(exe), filter);
-
 
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
     rom = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
 
   gtk_widget_destroy (dialog);
+  return rom;
+#endif
+}
+
+void open_rom(GtkMenuItem *menuitem, gpointer data)
+{
+  char* rom = get_file_chooser(data);
 
   if (rom)
   {
@@ -175,18 +202,7 @@ void open_rom(GtkMenuItem *menuitem, gpointer data)
 void gui_load_state(GtkMenuItem *menuitem, gpointer data)
 {
   GtkWidget *dialog;
-  char *statefile;
-
-  dialog = gtk_file_chooser_dialog_new(
-    "Choose a state file...", GTK_WINDOW(gtk_widget_get_toplevel(data)),
-    GTK_FILE_CHOOSER_ACTION_OPEN, ("_Cancel"),
-    GTK_RESPONSE_CANCEL, ("_Open"), GTK_RESPONSE_ACCEPT,
-    NULL);
-
-  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
-    statefile = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
-
-  gtk_widget_destroy (dialog);
+  char *statefile = get_file_chooser(data);
 
   if (statefile)
   {
