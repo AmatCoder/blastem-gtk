@@ -77,6 +77,9 @@ static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
 void quit_gui(GtkMenuItem *menuitem, gpointer data)
 {
   gtk_widget_destroy(GTK_WIDGET(data));
+
+  if (running)
+    current_system->request_exit(current_system);
   running = 1;
 }
 
@@ -348,7 +351,6 @@ void create_gui(NativeWindow XID, int fullscreen, int width, int height)
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), gtk_separator_menu_item_new());
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), loadState);
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), saveState);
-  gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), gtk_separator_menu_item_new());
 
   setSpeed5 = menu_radio_new(speedMenu, &menu_list, &speed_list, 25);
   setSpeed6 = menu_radio_new(speedMenu, &menu_list, &speed_list, 50);

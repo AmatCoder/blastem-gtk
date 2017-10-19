@@ -578,11 +578,16 @@ int main(int argc, char ** argv)
 		SDL_Event event;
 		while(SDL_PollEvent(&event))
 		{
-			if (event.type == SDL_DROPFILE){
-			if (on_drag_drop) {
-				load(event.drop.file);
+			switch (event.type) {
+				case SDL_QUIT:
+					running = 1;
+				break;
+			case SDL_DROPFILE:
+				if (on_drag_drop) {
+					load(event.drop.file);
 				}
-			SDL_free(event.drop.file);
+				SDL_free(event.drop.file);
+			break;
 			}
 		}
 		SDL_GL_SwapWindow(main_window);
