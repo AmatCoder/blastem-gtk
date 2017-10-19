@@ -225,7 +225,7 @@ void set_speed(GtkMenuItem *menuitem, gpointer data)
   }
 }
 
-GtkWidget* menu_radio_new(GtkWidget *menu, GSList **radio_group, guint label)
+GtkWidget* menu_radio_new(GtkWidget *menu, GSList **menu_list, GSList **radio_group, guint label)
 {
   GtkWidget *widget;
   gchar* f_label;
@@ -235,6 +235,9 @@ GtkWidget* menu_radio_new(GtkWidget *menu, GSList **radio_group, guint label)
   g_free(f_label);
 
   g_object_set_data(G_OBJECT(widget), "speed", GUINT_TO_POINTER(label));
+
+  *menu_list = g_slist_append(*menu_list, widget);
+  gtk_widget_set_sensitive(widget, FALSE);
 
   *radio_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(widget));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), widget);
@@ -317,7 +320,7 @@ void create_gui(NativeWindow XID, int fullscreen, int width, int height)
   system = gtk_menu_item_new_with_label("System");
   softReset = menu_disable_new(&menu_list, "Soft Reset");
   reloadMedia= menu_disable_new(&menu_list, "Reload");
-  setSpeed = menu_disable_new(&menu_list, "Speed");
+  setSpeed = gtk_menu_item_new_with_label("Speed");
   loadState = menu_disable_new(&menu_list, "Load State");
   saveState = menu_disable_new(&menu_list, "Save State");
 
@@ -332,6 +335,7 @@ void create_gui(NativeWindow XID, int fullscreen, int width, int height)
 
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), fileMenu);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(system), systemMenu);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(setSpeed), speedMenu);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(video), videoMenu);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), helpMenu);
 
@@ -345,17 +349,15 @@ void create_gui(NativeWindow XID, int fullscreen, int width, int height)
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), loadState);
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), saveState);
   gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), gtk_separator_menu_item_new());
-  gtk_menu_shell_append(GTK_MENU_SHELL(systemMenu), setSpeed);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(setSpeed), speedMenu);
 
-  setSpeed5 = menu_radio_new(speedMenu, &speed_list, 25);
-  setSpeed6 = menu_radio_new(speedMenu, &speed_list, 50);
-  setSpeed7 = menu_radio_new(speedMenu, &speed_list, 75);
-  setSpeed0 = menu_radio_new(speedMenu, &speed_list, 100);
-  setSpeed1 = menu_radio_new(speedMenu, &speed_list, 150);
-  setSpeed2 = menu_radio_new(speedMenu, &speed_list, 200);
-  setSpeed3 = menu_radio_new(speedMenu, &speed_list, 300);
-  setSpeed4 = menu_radio_new(speedMenu, &speed_list, 400);
+  setSpeed5 = menu_radio_new(speedMenu, &menu_list, &speed_list, 25);
+  setSpeed6 = menu_radio_new(speedMenu, &menu_list, &speed_list, 50);
+  setSpeed7 = menu_radio_new(speedMenu, &menu_list, &speed_list, 75);
+  setSpeed0 = menu_radio_new(speedMenu, &menu_list, &speed_list, 100);
+  setSpeed1 = menu_radio_new(speedMenu, &menu_list, &speed_list, 150);
+  setSpeed2 = menu_radio_new(speedMenu, &menu_list ,&speed_list, 200);
+  setSpeed3 = menu_radio_new(speedMenu, &menu_list ,&speed_list, 300);
+  setSpeed4 = menu_radio_new(speedMenu, &menu_list ,&speed_list, 400);
   gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(setSpeed0), TRUE);
   g_object_set_data(G_OBJECT(topwindow), "default_speed", setSpeed0);
 
@@ -368,6 +370,7 @@ void create_gui(NativeWindow XID, int fullscreen, int width, int height)
 
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), system);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), setSpeed);
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), video);
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 
