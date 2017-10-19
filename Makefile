@@ -164,9 +164,6 @@ all : $(ALL)
 blastem-gtk$(EXE) : $(MAINOBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 	$(FIXUP) ./$@
-	
-blastjag$(EXE) : jaguar.o jag_video.o render_sdl.o serialize.o $(M68KOBJS) $(TRANSOBJS) $(CONFIGOBJS)
-	$(CC) -o $@ $^ $(LDFLAGS)
 
 res.o : blastem.rc
 	i686-w64-mingw32-windres blastem.rc res.o
