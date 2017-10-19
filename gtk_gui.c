@@ -4,6 +4,10 @@
   #include <gtk/gtkx.h>
 #endif
 
+#ifdef G_OS_WIN32
+#include "gdk/gdkwin32.h"
+#endif
+
 #include "blastem.h"
 #include "render.h"
 
@@ -136,7 +140,7 @@ void open_rom(GtkMenuItem *menuitem, gpointer data)
   char* rom = NULL;
 
   dialog = gtk_file_chooser_dialog_new(
-    "Choose a ROM...", GTK_WINDOW(gtk_widget_get_toplevel(data)),
+    "Choose a ROM...", GTK_WINDOW(data),
     GTK_FILE_CHOOSER_ACTION_OPEN, ("_Cancel"),
     GTK_RESPONSE_CANCEL, ("_Open"), GTK_RESPONSE_ACCEPT,
     NULL);
@@ -249,7 +253,7 @@ GtkWidget* menu_disable_new(GSList **menu_list, const gchar *label)
   return widget;
 }
 
-void create_gui(unsigned long XID, int fullscreen, int width, int height)
+void create_gui(NativeWindow XID, int fullscreen, int width, int height)
 {
   GtkWidget *socket;
   GtkWidget *vbox;
@@ -294,7 +298,9 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
   gtk_init(NULL, NULL);
 
   topwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+#ifndef G_OS_WIN32
   socket = gtk_socket_new();
+#endif
   vbox = gtk_vbox_new(FALSE, 0);
 
   menubar = gtk_menu_bar_new();
@@ -367,11 +373,13 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
 
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
   gtk_container_add(GTK_CONTAINER(topwindow), vbox);
+#ifndef G_OS_WIN32
   gtk_container_add(GTK_CONTAINER(vbox), socket);
+#endif
 
   g_signal_connect(topwindow, "delete-event", G_CALLBACK(delete_event), NULL);
   g_signal_connect(quit, "activate", G_CALLBACK(quit_gui), topwindow);
-  g_signal_connect(open, "activate", G_CALLBACK(open_rom), socket);
+  g_signal_connect(open, "activate", G_CALLBACK(open_rom), topwindow);
   g_signal_connect(fullScreen, "activate", G_CALLBACK(set_fullscreen), NULL);
   g_signal_connect(scanLines, "activate", G_CALLBACK(set_scanlines), NULL);
   g_signal_connect(softReset, "activate", G_CALLBACK(soft_reset), NULL);
@@ -388,14 +396,21 @@ void create_gui(unsigned long XID, int fullscreen, int width, int height)
     float aspect = config_aspect() > 0.0f ? config_aspect() : 4.0f/3.0f;
     height = ((float)width / aspect) + 0.5f;
   }
+
+#ifdef G_OS_WIN32
+  gtk_widget_set_size_request(menubar, 2048, 25);
+  gtk_widget_show_all(topwindow);
+  GdkWindow *gdkWindow = gdk_win32_window_foreign_new_for_display(gdk_screen_get_display(gdk_screen_get_default()), XID);
+  gdk_window_reparent(gtk_widget_get_window(menubar), gdkWindow, 0 , 0);
+  gtk_widget_hide(topwindow);
+  gdk_window_focus (gdkWindow, 0);
+#else
   gtk_widget_set_size_request(socket, width, height);
-
-
   gtk_socket_add_id(GTK_SOCKET(socket), XID);
-
   gtk_window_set_title(GTK_WINDOW(topwindow), "BlastEm");
   gtk_window_set_icon(GTK_WINDOW(topwindow), gdk_pixbuf_new_from_resource("/org/blastem-gtk/icons/logo-gtk.png", NULL));
   gtk_widget_show_all(topwindow);
+#endif
 
   if (fullscreen)
     set_fullscreen(NULL, NULL);

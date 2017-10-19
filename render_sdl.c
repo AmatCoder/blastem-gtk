@@ -15,7 +15,6 @@
 #include "ppm.h"
 
 #include <SDL2/SDL_syswm.h>
-#include "gtk_gui.h"
 
 #ifndef DISABLE_OPENGL
 #include <GL/glew.h>
@@ -347,7 +346,7 @@ static uint32_t overscan_left[NUM_VID_STD] = {13, 13};
 static uint32_t overscan_right[NUM_VID_STD] = {14, 14};
 static vid_std video_standard = VID_NTSC;
 static char *vid_std_names[NUM_VID_STD] = {"ntsc", "pal"};
-unsigned long render_init(int width, int height, char * title, uint8_t fullscreen)
+NativeWindow render_init(int width, int height, char * title, uint8_t fullscreen)
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
 		fatal_error("Unable to init SDL: %s\n", SDL_GetError());
@@ -360,8 +359,13 @@ unsigned long render_init(int width, int height, char * title, uint8_t fullscree
 	printf("width: %d, height: %d\n", width, height);
 	windowed_width = width;
 	windowed_height = height;
-	
+
+#ifdef G_OS_WIN32
+	uint32_t flags = SDL_WINDOW_RESIZABLE;
+#else
 	uint32_t flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
+#endif
+
 
 	if (fullscreen) {
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
@@ -528,7 +532,11 @@ unsigned long render_init(int width, int height, char * title, uint8_t fullscree
 	SDL_VERSION(&info.version);
 
 	if(SDL_GetWindowWMInfo(main_window, &info))
+#ifdef G_OS_WIN32
+		return info.info.win.window;
+#else
 		return info.info.x11.window;
+#endif
   else return 0;
 }
 

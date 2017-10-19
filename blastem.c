@@ -408,7 +408,7 @@ int main(int argc, char ** argv)
 	uint8_t start_in_debugger = 0;
 	uint8_t fullscreen = FULLSCREEN_DEFAULT, use_gl = 1;
 	uint8_t debug_target = 0;
-	unsigned long XID;
+	NativeWindow XID;
 
 	for (int i = 1; i < argc; i++) {
 		if (argv[i][0] == '-') {
