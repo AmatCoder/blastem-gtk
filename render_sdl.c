@@ -721,7 +721,11 @@ void render_framebuffer_updated(uint8_t which, int width)
 					fps_caption = malloc(strlen(caption) + strlen(" - 100000000.1 fps") + 1);
 				}
 				sprintf(fps_caption, "%s - %.1f fps", caption, ((float)frame_counter) / (((float)(last_frame-start)) / 1000.0));
+			#ifdef G_OS_WIN32
+				SDL_SetWindowTitle(main_window, fps_caption);
+			#else
 				gtk_window_set_title(GTK_WINDOW(topwindow), fps_caption);
+			#endif
 	#endif
 			}
 			start = last_frame;
