@@ -119,24 +119,31 @@ void set_fullscreen(GtkMenuItem *menuitem, gpointer data)
     render_toggle_fullscreen();
 }
 
-char* save_file_chooser(gpointer data)
+char* save_file_chooser(gpointer data, const char *ext)
 {
 #ifdef G_OS_WIN32
   OPENFILENAME ofn;
-  char szFile[MAX_PATH] = "";
+  char szFile[MAX_PATH];
+  strcpy(szFile, "untitled.");
+  strcat(szFile, ext);
 
   ZeroMemory(&ofn, sizeof(ofn));
   ofn.lStructSize = sizeof(ofn);
   ofn.hwndOwner = NULL  ;
   ofn.lpstrFile = szFile ;
-  ofn.lpstrFile[0] = '\0';
   ofn.nMaxFile = MAX_PATH;
-  ofn.lpstrFilter = "All\0*.*\0";
+
+  if (ext[0] == 's')
+    ofn.lpstrFilter = "State Files\0*.state\0\0";
+  else
+    ofn.lpstrFilter = "Portable Pixmap Format\0*.ppm\0\0";
+
   ofn.nFilterIndex = 1;
+  ofn.lpstrDefExt = ext;
   ofn.lpstrFileTitle = NULL ;
   ofn.nMaxFileTitle = 0 ;
   ofn.lpstrInitialDir = NULL ;
-  ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST ;
+  ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 
   if(GetSaveFileName(&ofn))
   {
@@ -150,12 +157,22 @@ char* save_file_chooser(gpointer data)
   char* path = NULL;
 
   dialog = gtk_file_chooser_dialog_new(
-    "Save screenshot...", GTK_WINDOW(data),
+    "Save file...", GTK_WINDOW(data),
     GTK_FILE_CHOOSER_ACTION_SAVE, ("_Cancel"),
     GTK_RESPONSE_CANCEL, ("_Save"), GTK_RESPONSE_ACCEPT,
     NULL);
 
   gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER(dialog), TRUE);
+
+  GtkFileFilter* filter = gtk_file_filter_new();
+  gchar *strfilter = g_strconcat("*.", ext, NULL);
+  gtk_file_filter_add_pattern(filter, strfilter);
+  g_free(strfilter);
+  gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
+
+  gchar *filename = g_strconcat("untitled.", ext, NULL);
+  gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), filename);
+  g_free(filename);
 
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
     path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
@@ -167,11 +184,11 @@ char* save_file_chooser(gpointer data)
 
 void save_screen(GtkMenuItem *menuitem, gpointer data)
 {
-  char* path = save_file_chooser(data);
+  char* path = save_file_chooser(data, "ppm");
   render_save_screenshot(path);
 }
 
-char* get_file_chooser(gpointer data)
+char* get_file_chooser(gpointer data, const char *ext)
 {
 #ifdef G_OS_WIN32
   OPENFILENAME ofn;
@@ -181,9 +198,13 @@ char* get_file_chooser(gpointer data)
   ofn.lStructSize = sizeof(ofn);
   ofn.hwndOwner = NULL  ;
   ofn.lpstrFile = szFile ;
-  ofn.lpstrFile[0] = '\0';
   ofn.nMaxFile = MAX_PATH;
-  ofn.lpstrFilter = "All\0*.*\0";
+
+  if (ext[0] == 's')
+    ofn.lpstrFilter = "State Files\0*.state\0\0";
+  else
+    ofn.lpstrFilter = "All Files\0*.*\0\0";
+
   ofn.nFilterIndex = 1;
   ofn.lpstrFileTitle = NULL ;
   ofn.nMaxFileTitle = 0 ;
@@ -207,6 +228,12 @@ char* get_file_chooser(gpointer data)
     GTK_RESPONSE_CANCEL, ("_Open"), GTK_RESPONSE_ACCEPT,
     NULL);
 
+  GtkFileFilter* filter = gtk_file_filter_new();
+  gchar *strfilter = g_strconcat("*.", ext, NULL);
+  gtk_file_filter_add_pattern(filter, strfilter);
+  g_free(strfilter);
+  gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
+
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
     rom = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
 
@@ -217,7 +244,7 @@ char* get_file_chooser(gpointer data)
 
 void open_rom(GtkMenuItem *menuitem, gpointer data)
 {
-  char* rom = get_file_chooser(data);
+  char* rom = get_file_chooser(data, "*");
 
   if (rom)
   {
@@ -236,7 +263,7 @@ void open_rom(GtkMenuItem *menuitem, gpointer data)
 void gui_load_state(GtkMenuItem *menuitem, gpointer data)
 {
   GtkWidget *dialog;
-  char *statefile = get_file_chooser(data);
+  char *statefile = get_file_chooser(data, "state");
 
   if (statefile)
   {
@@ -247,7 +274,7 @@ void gui_load_state(GtkMenuItem *menuitem, gpointer data)
 
 void gui_save_state(GtkMenuItem *menuitem, gpointer data)
 {
-  char* path = save_file_chooser(data);
+  char* path = save_file_chooser(data, "state");
 
   if (path)
     save_state_path = path;
