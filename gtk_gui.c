@@ -49,11 +49,15 @@ void gui_toggle_fullscreen(GObject *object, int is_fullscreen)
   if (is_fullscreen)
   {
     gtk_widget_hide(menubar);
+#ifndef G_OS_WIN32
     gtk_window_fullscreen(GTK_WINDOW(object));
+#endif
   }
   else
   {
+#ifndef G_OS_WIN32
     gtk_window_unfullscreen(GTK_WINDOW(object));
+#endif
     gtk_widget_show(menubar);
   }
 }
