@@ -115,8 +115,33 @@ void set_fullscreen(GtkMenuItem *menuitem, gpointer data)
     render_toggle_fullscreen();
 }
 
-void save_screen(GtkMenuItem *menuitem, gpointer data)
+char* save_file_chooser(gpointer data)
 {
+#ifdef G_OS_WIN32
+  OPENFILENAME ofn;
+  char szFile[MAX_PATH] = "";
+
+  ZeroMemory(&ofn, sizeof(ofn));
+  ofn.lStructSize = sizeof(ofn);
+  ofn.hwndOwner = NULL  ;
+  ofn.lpstrFile = szFile ;
+  ofn.lpstrFile[0] = '\0';
+  ofn.nMaxFile = MAX_PATH;
+  ofn.lpstrFilter = "All\0*.*\0";
+  ofn.nFilterIndex = 1;
+  ofn.lpstrFileTitle = NULL ;
+  ofn.nMaxFileTitle = 0 ;
+  ofn.lpstrInitialDir = NULL ;
+  ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST ;
+
+  if(GetSaveFileName(&ofn))
+  {
+    char *result = (char *)malloc(MAX_PATH+1);
+    strcpy(result, szFile);
+    return result;
+  }
+  else return NULL;
+#else
   GtkWidget *dialog;
   char* path = NULL;
 
@@ -127,13 +152,18 @@ void save_screen(GtkMenuItem *menuitem, gpointer data)
     NULL);
 
   gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER(dialog), TRUE);
-  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(dialog), "untitled.ppm");
 
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
     path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
 
-
   gtk_widget_destroy (dialog);
+  return path;
+#endif
+}
+
+void save_screen(GtkMenuItem *menuitem, gpointer data)
+{
+  char* path = save_file_chooser(data);
   render_save_screenshot(path);
 }
 
@@ -213,23 +243,12 @@ void gui_load_state(GtkMenuItem *menuitem, gpointer data)
 
 void gui_save_state(GtkMenuItem *menuitem, gpointer data)
 {
-  GtkWidget *dialog;
-  char* path = save_state_path;
+  char* path = save_file_chooser(data);
 
-  dialog = gtk_file_chooser_dialog_new(
-    "Save state file...", GTK_WINDOW(data),
-    GTK_FILE_CHOOSER_ACTION_SAVE, ("_Cancel"),
-    GTK_RESPONSE_CANCEL, ("_Save"), GTK_RESPONSE_ACCEPT,
-    NULL);
-
-  gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER(dialog), TRUE);
-  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(dialog), "untitled.state");
-
-  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
-    save_state_path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
+  if (path)
+    save_state_path = path;
 
   current_system->save_state = QUICK_SAVE_SLOT+1;
-  gtk_widget_destroy (dialog);
 }
 
 void set_speed(GtkMenuItem *menuitem, gpointer data)
