@@ -474,7 +474,8 @@ void create_gui(NativeWindow XID, int fullscreen, int width, int height)
   GdkWindow *gdkWindow = gdk_win32_window_foreign_new_for_display(gdk_screen_get_display(gdk_screen_get_default()), XID);
   gdk_window_reparent(gtk_widget_get_window(menubar), gdkWindow, 0 , 0);
   gtk_widget_hide(topwindow);
-  gdk_window_focus (gdkWindow, 0);
+  gdk_window_focus(gdkWindow, 0);
+  gdk_window_set_events(gdkWindow, GDK_SUBSTRUCTURE_MASK);
 #else
   gtk_widget_set_size_request(socket, width, height);
   gtk_socket_add_id(GTK_SOCKET(socket), XID);
