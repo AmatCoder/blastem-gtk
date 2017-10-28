@@ -147,8 +147,8 @@ char* save_file_chooser(gpointer data, const char *ext)
 
   ZeroMemory(&ofn, sizeof(ofn));
   ofn.lStructSize = sizeof(ofn);
-  ofn.hwndOwner = NULL  ;
-  ofn.lpstrFile = szFile ;
+  ofn.hwndOwner = g_object_get_data(G_OBJECT(data), "HWND");
+  ofn.lpstrFile = szFile;
   ofn.nMaxFile = MAX_PATH;
 
   if (ext[0] == 's')
@@ -158,9 +158,9 @@ char* save_file_chooser(gpointer data, const char *ext)
 
   ofn.nFilterIndex = 1;
   ofn.lpstrDefExt = ext;
-  ofn.lpstrFileTitle = NULL ;
-  ofn.nMaxFileTitle = 0 ;
-  ofn.lpstrInitialDir = NULL ;
+  ofn.lpstrFileTitle = NULL;
+  ofn.nMaxFileTitle = 0;
+  ofn.lpstrInitialDir = NULL;
   ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 
   SDL_PauseAudio(1);
@@ -219,8 +219,8 @@ char* get_file_chooser(gpointer data, const char *ext)
 
   ZeroMemory(&ofn, sizeof(ofn));
   ofn.lStructSize = sizeof(ofn);
-  ofn.hwndOwner = NULL  ;
-  ofn.lpstrFile = szFile ;
+  ofn.hwndOwner = g_object_get_data(G_OBJECT(data), "HWND");
+  ofn.lpstrFile = szFile;
   ofn.nMaxFile = MAX_PATH;
 
   if (ext[0] == 's')
@@ -229,9 +229,9 @@ char* get_file_chooser(gpointer data, const char *ext)
     ofn.lpstrFilter = "All Files\0*.*\0\0";
 
   ofn.nFilterIndex = 1;
-  ofn.lpstrFileTitle = NULL ;
-  ofn.nMaxFileTitle = 0 ;
-  ofn.lpstrInitialDir = NULL ;
+  ofn.lpstrFileTitle = NULL;
+  ofn.nMaxFileTitle = 0;
+  ofn.lpstrInitialDir = NULL;
   ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST ;
 
   SDL_PauseAudio(1);
@@ -503,6 +503,7 @@ void create_gui(NativeWindow XID, int fullscreen, int width, int height)
   gtk_widget_hide(topwindow);
   gdk_window_focus(gdkWindow, 0);
   gdk_window_set_events(gdkWindow, GDK_SUBSTRUCTURE_MASK);
+  g_object_set_data(G_OBJECT(topwindow), "HWND", XID);
 #else
   gtk_widget_set_size_request(socket, width, height);
   gtk_socket_add_id(GTK_SOCKET(socket), XID);
