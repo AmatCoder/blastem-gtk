@@ -139,6 +139,8 @@ char* save_file_chooser(gpointer data, const char *ext)
 {
 #ifdef G_OS_WIN32
   OPENFILENAME ofn;
+  char *result = NULL;
+
   char szFile[MAX_PATH];
   strcpy(szFile, "untitled.");
   strcat(szFile, ext);
@@ -161,13 +163,17 @@ char* save_file_chooser(gpointer data, const char *ext)
   ofn.lpstrInitialDir = NULL ;
   ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 
+  SDL_PauseAudio(1);
+
   if(GetSaveFileName(&ofn))
   {
-    char *result = (char *)malloc(MAX_PATH+1);
+    result = (char *)malloc(MAX_PATH+1);
     strcpy(result, szFile);
-    return result;
   }
-  else return NULL;
+
+  SDL_PauseAudio(0);
+
+  return result;
 #else
   GtkWidget *dialog;
   char* path = NULL;
@@ -208,6 +214,7 @@ char* get_file_chooser(gpointer data, const char *ext)
 {
 #ifdef G_OS_WIN32
   OPENFILENAME ofn;
+  char *result = NULL;
   char szFile[MAX_PATH] = "";
 
   ZeroMemory(&ofn, sizeof(ofn));
@@ -227,13 +234,17 @@ char* get_file_chooser(gpointer data, const char *ext)
   ofn.lpstrInitialDir = NULL ;
   ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST ;
 
+  SDL_PauseAudio(1);
+
   if(GetOpenFileName(&ofn))
   {
-    char *result = (char *)malloc(MAX_PATH+1);
+    result = (char *)malloc(MAX_PATH+1);
     strcpy(result, szFile);
-    return result;
   }
-  else return NULL;
+
+  SDL_PauseAudio(0);
+
+  return result;
 #else
   GtkWidget *dialog;
   char* rom = NULL;
