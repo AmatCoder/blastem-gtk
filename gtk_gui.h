@@ -19,6 +19,7 @@ extern GtkWidget* topwindow;
 void set_default_speed();
 void gui_toggle_fullscreen(GObject *object, int is_fullscreen);
 void enable_menus(GObject *object);
+void show_message(char *filename, char *msg);
 void create_gui(NativeWindow XID, int fullscreen, int width, int height);
 
 #endif //GTK_GUI_H_

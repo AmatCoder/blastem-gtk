@@ -13,6 +13,20 @@
 
 GtkWidget* topwindow;
 
+void show_message(char *filename, char *msg)
+{
+  GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(topwindow),
+                                             GTK_DIALOG_DESTROY_WITH_PARENT,
+                                             GTK_MESSAGE_ERROR,
+                                             GTK_BUTTONS_CLOSE,
+                                             "\"%s\"\n%s",
+                                             filename,
+                                             msg);
+
+  gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+}
+
 void show_about(GtkMenuItem *menuitem, gpointer data)
 {
   const char *authors[3] = {"Mike Pavone (Emulator)", "AmatCoder (GUI)", NULL};
@@ -80,7 +94,9 @@ static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
 
 void quit_gui(GtkMenuItem *menuitem, gpointer data)
 {
+#ifdef G_OS_WIN32
   gtk_widget_destroy(GTK_WIDGET(data));
+#endif
 
   if (running)
     current_system->request_exit(current_system);

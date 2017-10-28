@@ -31,7 +31,7 @@ EXE:=
 ifeq ($(OS),Darwin)
 LIBS=sdl2 glew
 else
-LIBS=sdl2 glew gl
+LIBS=sdl2 glew gl zlib
 endif #Darwin
 
 HAS_PROC:=$(shell if [ -d /proc ]; then /bin/echo -e -DHAS_PROC; fi)
@@ -133,7 +133,7 @@ Z80OBJS=z80inst.o z80_to_x86.o
 AUDIOOBJS=ym2612.o psg.o wave.o
 CONFIGOBJS=config.o tern.o util.o
 
-MAINOBJS=blastem.o system.o genesis.o debug.o gdb_remote.o vdp.o gresource.o gtk_gui.o render_sdl.o ppm.o io.o romdb.o hash.o menu.o xband.o realtec.o i2c.o nor.o sega_mapper.o multi_game.o serialize.o $(TERMINAL) $(CONFIGOBJS) gst.o $(M68KOBJS) $(TRANSOBJS) $(AUDIOOBJS)
+MAINOBJS=blastem.o system.o genesis.o debug.o gdb_remote.o vdp.o gresource.o gtk_gui.o render_sdl.o ppm.o io.o romdb.o hash.o menu.o xband.o realtec.o i2c.o nor.o sega_mapper.o multi_game.o serialize.o ajunzip.o $(TERMINAL) $(CONFIGOBJS) gst.o $(M68KOBJS) $(TRANSOBJS) $(AUDIOOBJS)
 
 ifeq ($(CPU),x86_64)
 CFLAGS+=-DX86_64 -m64

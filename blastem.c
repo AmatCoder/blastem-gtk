@@ -26,6 +26,7 @@
 #include "menu.h"
 
 #include "gtk_gui.h"
+#include "ajunzip.h"
 
 #define BLASTEM_VERSION "0.5.2-pre"
 
@@ -50,6 +51,21 @@ tern_node * config;
 #define SMD_MAGIC3 0xBB
 #define SMD_BLOCK_SIZE 0x4000
 
+int check_rom(char *filename)
+{
+	int r;
+	FILE *f = ajunzip(filename);
+
+	r = f == NULL ? 0 : 1;
+
+	if (r)
+		fclose(f);
+	else
+		show_message(filename, "is not a valid ROM!");
+
+	return r;
+}
+
 int load_smd_rom(long filesize, FILE * f, void **buffer)
 {
 	uint8_t block[SMD_BLOCK_SIZE];
@@ -71,7 +87,7 @@ int load_smd_rom(long filesize, FILE * f, void **buffer)
 uint32_t load_rom(char * filename, void **dst, system_type *stype)
 {
 	uint8_t header[10];
-	FILE * f = fopen(filename, "rb");
+	FILE * f = ajunzip(filename);
 	if (!f) {
 		return 0;
 	}
@@ -253,7 +269,6 @@ void load(char *romfname)
 	config = load_config();
 	int debug = 0;
 	uint32_t opts = 0;
-	int loaded = 0;
 	system_type stype = SYSTEM_UNKNOWN, force_stype = SYSTEM_UNKNOWN;
 	uint8_t force_region = 0;
 	debugger_type dtype = DEBUGGER_NATIVE;
@@ -261,38 +276,40 @@ void load(char *romfname)
 	uint8_t fullscreen = FULLSCREEN_DEFAULT, use_gl = 1;
 	uint8_t debug_target = 0;
 
+	if (!romfname)
+		return;
+
+	if(!check_rom(romfname))
+		return;
+
   if(current_system)
     current_system->request_exit(current_system);
 
 	uint8_t menu = 0;
-	if (!loaded) {
-		//load menu
-		//romfname = tern_find_path(config, "ui\0rom\0", TVAL_PTR).ptrval;
-		if (!romfname) {
-			exit(0);
+
+	//load menu
+	//romfname = tern_find_path(config, "ui\0rom\0", TVAL_PTR).ptrval;
+
+	if (is_absolute_path(romfname)) {
+		if (!(cart.size = load_rom(romfname, &cart.buffer, &stype))) {
+			fatal_error("Failed to open UI ROM %s for reading", romfname);
 		}
-		if (is_absolute_path(romfname)) {
-			if (!(cart.size = load_rom(romfname, &cart.buffer, &stype))) {
-				fatal_error("Failed to open UI ROM %s for reading", romfname);
-			}
-		} else {
-			cart.buffer = (uint16_t *)read_bundled_file(romfname, &cart.size);
-			if (!cart.buffer) {
-				fatal_error("Failed to open UI ROM %s for reading", romfname);
-			}
-			uint32_t rom_size = nearest_pow2(cart.size);
-			if (rom_size > cart.size) {
-				cart.buffer = realloc(cart.buffer, rom_size);
-				cart.size = rom_size;
-			}
+	} else {
+		cart.buffer = (uint16_t *)read_bundled_file(romfname, &cart.size);
+		if (!cart.buffer) {
+			fatal_error("Failed to open UI ROM %s for reading", romfname);
 		}
-		//force system detection, value on command line is only for games not the menu
-		stype = detect_system_type(&cart);
-		cart.dir = path_dirname(romfname);
-		cart.name = basename_no_extension(romfname);
-		cart.extension = path_extension(romfname);
-		loaded = 1;
+		uint32_t rom_size = nearest_pow2(cart.size);
+		if (rom_size > cart.size) {
+			cart.buffer = realloc(cart.buffer, rom_size);
+			cart.size = rom_size;
+		}
 	}
+	//force system detection, value on command line is only for games not the menu
+	stype = detect_system_type(&cart);
+	cart.dir = path_dirname(romfname);
+	cart.name = basename_no_extension(romfname);
+	cart.extension = path_extension(romfname);
 
 	if (stype == SYSTEM_UNKNOWN) {
 		stype = detect_system_type(&cart);
@@ -329,6 +346,12 @@ void load(char *romfname)
 			break;
 		}
 		if (current_system->next_rom) {
+			if (!check_rom(current_system->next_rom))
+			{
+					current_system->next_rom = NULL;
+					current_system->resume_context(current_system);
+					continue;
+			}
 			char *next_rom = current_system->next_rom;
 			current_system->next_rom = NULL;
 			if (game_system) {
