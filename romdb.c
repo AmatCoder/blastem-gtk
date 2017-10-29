@@ -596,7 +596,7 @@ void map_iter_fun(char *key, tern_val val, uint8_t valtype, void *data)
 			*map = lock_info.map[i];
 			if (map->start < 0x200000) {
 				if (map->buffer) {
-					map->buffer += (0x200000 - map->start) & ((map->flags & MMAP_AUX_BUFF) ? map->aux_mask : map->mask);
+					(char*)map->buffer += (0x200000 - map->start) & ((map->flags & MMAP_AUX_BUFF) ? map->aux_mask : map->mask);
 				}
 				map->start = 0x200000;
 			}

@@ -10,6 +10,10 @@
 #include "gst.h"
 #include "m68k_internal.h" //needed for get_native_address_trans, should be eliminated once handling of PC is cleaned up
 
+#ifdef _MSC_VER 
+#define strcasecmp _stricmp
+#endif
+
 static menu_context *persist_path_menu;
 static void persist_path(void)
 {

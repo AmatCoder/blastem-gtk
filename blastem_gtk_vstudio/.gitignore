@@ -1,0 +1,7 @@
+/Debug
+/Release
+/.vs
+/glew
+/gtk
+/SDL2
+/zlib

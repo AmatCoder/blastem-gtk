@@ -14,7 +14,7 @@
 #include "util.h"
 #include "ppm.h"
 
-#include <SDL2/SDL_syswm.h>
+#include <SDL_syswm.h>
 
 #ifndef DISABLE_OPENGL
 #include <GL/glew.h>
@@ -584,7 +584,7 @@ uint32_t *render_get_framebuffer(uint8_t which, int *pitch)
 		if (which <= FRAMEBUFFER_EVEN) {
 			locked_pixels = pixels;
 			if (which == FRAMEBUFFER_EVEN) {
-				pixels += *pitch;
+				(char*)pixels += *pitch;
 			}
 			locked_pitch = *pitch;
 			if (which != last) {

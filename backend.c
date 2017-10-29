@@ -83,7 +83,7 @@ void * get_native_pointer(uint32_t address, void ** mem_pointers, cpu_options * 
 				: memmap[chunk].buffer;
 			if (!base) {
 				if (memmap[chunk].flags & MMAP_AUX_BUFF) {
-					return memmap[chunk].buffer + (address & memmap[chunk].aux_mask);
+					return (char*)memmap[chunk].buffer + (address & memmap[chunk].aux_mask);
 				}
 				return NULL;
 			}
