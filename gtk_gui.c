@@ -13,18 +13,70 @@
 
 GtkWidget* topwindow;
 
+#ifdef G_OS_WIN32
+void center_dialog(GtkWidget *widget)
+{
+  RECT rc, rcDlg, rcOwner;
+
+  HWND hwndOwner = g_object_get_data(G_OBJECT(topwindow), "HWND");
+  HWND hwndDlg = GDK_WINDOW_HWND(gtk_widget_get_window(widget));
+
+  GetWindowRect(hwndOwner, &rcOwner);
+  GetWindowRect(hwndDlg, &rcDlg);
+  CopyRect(&rc, &rcOwner);
+
+  OffsetRect(&rcDlg, -rcDlg.left, -rcDlg.top);
+  OffsetRect(&rc, -rc.left, -rc.top);
+  OffsetRect(&rc, -rcDlg.right, -rcDlg.bottom);
+
+  SetWindowPos(hwndDlg,
+               HWND_TOP,
+               rcOwner.left + (rc.right / 2),
+               rcOwner.top + (rc.bottom / 2),
+               0, 0,
+               SWP_NOSIZE);
+
+  SetFocus(hwndDlg);
+}
+#endif
+
+void close_dialog(GtkButton *button, gint response_id, gpointer data)
+{
+#ifdef G_OS_WIN32
+  EnableWindow(g_object_get_data(G_OBJECT(topwindow), "HWND"), TRUE);
+#endif
+  gtk_widget_destroy(GTK_WIDGET(data));
+}
+
 void show_message(char *filename, char *msg)
 {
+#ifdef G_OS_WIN32
+  if (!running)
+  {
+    gchar *text= g_strconcat("\"", filename, "\" ", msg, NULL );
+    MessageBoxA(g_object_get_data(G_OBJECT(topwindow), "HWND"), text, "", MB_OK);
+    g_free(text);
+  }
+  else
+  {
+#endif
   GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(topwindow),
                                              GTK_DIALOG_DESTROY_WITH_PARENT,
-                                             GTK_MESSAGE_ERROR,
+                                             GTK_MESSAGE_OTHER,
                                              GTK_BUTTONS_CLOSE,
-                                             "\"%s\"\n%s",
+                                             "\"%s\" %s",
                                              filename,
                                              msg);
 
-  gtk_dialog_run (GTK_DIALOG (dialog));
-  gtk_widget_destroy (dialog);
+  g_signal_connect(dialog, "response", G_CALLBACK(close_dialog), dialog);
+
+  gtk_window_present(GTK_WINDOW(dialog));
+  gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+#ifdef G_OS_WIN32
+  EnableWindow(g_object_get_data(G_OBJECT(topwindow), "HWND"), FALSE);
+  center_dialog(dialog);
+  }
+#endif
 }
 
 void show_about(GtkMenuItem *menuitem, gpointer data)
@@ -44,17 +96,28 @@ You should have received a copy of the GNU General Public License \
 along with blastem-gtk.  If not, see <http://www.gnu.org/licenses/>.";
 
 
-  gtk_show_about_dialog(GTK_WINDOW(data),
-  "program-name", "blastem-gtk",
-  "version" , "0.5.2-pre",
-  "authors", authors,
-  "copyright", "Copyright \xc2\xa9 2013-2017 Michael Pavone\nCopyright \xc2\xa9 2017 AmatCoder",
-  "comments", "A GTK+ port of BlastEm emulator",
-  "license", gpl3,
-  "wrap-license", TRUE,
-  "website", "https://github.com/AmatCoder/blastem-gtk",
-  "logo", gtk_window_get_icon(GTK_WINDOW(data)),
-  NULL);
+  GtkWidget *dialog = gtk_about_dialog_new();
+
+  gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), "blastem-gtk");
+  gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), "0.5.2-pre");
+  gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(dialog), authors);
+  gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog), "Copyright \xc2\xa9 2013-2017 Michael Pavone\nCopyright \xc2\xa9 2017 AmatCoder");
+  gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), "A GTK+ port of BlastEm emulator");
+  gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(dialog), gpl3);
+  gtk_about_dialog_set_wrap_license(GTK_ABOUT_DIALOG(dialog), TRUE);
+  gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/AmatCoder/blastem-gtk");
+  gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), gtk_window_get_icon(GTK_WINDOW(data)));
+
+  gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(data));
+  g_signal_connect(GTK_DIALOG(dialog), "response", G_CALLBACK(close_dialog), dialog);
+
+  gtk_window_present(GTK_WINDOW(dialog));
+  gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+
+#ifdef G_OS_WIN32
+  EnableWindow(g_object_get_data(G_OBJECT(topwindow), "HWND"), FALSE);
+  center_dialog(dialog);
+#endif
 }
 
 void gui_toggle_fullscreen(GObject *object, int is_fullscreen)
