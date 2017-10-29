@@ -163,15 +163,16 @@ char* save_file_chooser(gpointer data, const char *ext)
   ofn.lpstrInitialDir = NULL;
   ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 
-  SDL_PauseAudio(1);
+  if (running)
+    SDL_PauseAudio(1);
 
   if(GetSaveFileName(&ofn))
   {
     result = (char *)malloc(MAX_PATH+1);
     strcpy(result, szFile);
   }
-
-  SDL_PauseAudio(0);
+  if (running)
+    SDL_PauseAudio(0);
 
   return result;
 #else
@@ -234,7 +235,8 @@ char* get_file_chooser(gpointer data, const char *ext)
   ofn.lpstrInitialDir = NULL;
   ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST ;
 
-  SDL_PauseAudio(1);
+  if (running)
+    SDL_PauseAudio(1);
 
   if(GetOpenFileName(&ofn))
   {
@@ -242,7 +244,8 @@ char* get_file_chooser(gpointer data, const char *ext)
     strcpy(result, szFile);
   }
 
-  SDL_PauseAudio(0);
+  if (running)
+    SDL_PauseAudio(0);
 
   return result;
 #else
