@@ -1041,6 +1041,7 @@ static int32_t handle_event(SDL_Event *event)
 		break;
 	case SDL_MOUSEBUTTONDOWN:
 		handle_mousedown(event->button.which, event->button.button);
+		if (event->button.clicks == 2) render_toggle_fullscreen();
 		break;
 	case SDL_MOUSEBUTTONUP:
 		handle_mouseup(event->button.which, event->button.button);
