@@ -354,7 +354,7 @@ int jzReadEndRecord(FILE *zip, JZEndRecord *endRecord)
     }
 
     if(i < 0) {
-        printf("End record signature not found in zip!");
+        //printf("End record signature not found in zip!");
         fseek(zip, 0, SEEK_SET);
         return Z_ERRNO;
     }
@@ -381,7 +381,7 @@ FILE* ajunzip(char *filename)
     if (!zip) return NULL;
 
     if(jzReadEndRecord(zip, &endRecord)) {
-
+		fseek(zip, 0, SEEK_END);
         long size = ftell (zip);
         rewind (zip);
         char *buffer = (char*) malloc (sizeof(char)*size);
@@ -392,6 +392,7 @@ FILE* ajunzip(char *filename)
         else
           out =  NULL;
 
+		fseek(zip, 0, SEEK_SET);
         free(buffer);
         return out;
     }

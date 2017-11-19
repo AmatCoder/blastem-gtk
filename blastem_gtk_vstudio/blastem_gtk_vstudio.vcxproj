@@ -53,14 +53,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;X86_32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;GTK2;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;X86_32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>..\include;gtk\include\gtk-3.0;gtk\include\glib-2.0;gtk\include;gtk\lib\glib-2.0\include;gtk\include\pango-1.0;gtk\include\cairo;gtk\include\gdk-pixbuf-2.0;gtk\include\atk-1.0;SDL2\include;glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;gtk\include\gtk-2.0;gtk\include\glib-2.0;gtk\include;gtk\lib\gtk-2.0\include;gtk\lib\glib-2.0\include;gtk\include\pango-1.0;gtk\include\cairo;gtk\include\gdk-pixbuf-2.0;gtk\include\atk-1.0;SDL2\include;glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>ws2_32.lib;opengl32.lib;SDL2\lib\x86\SDL2.lib;SDL2\lib\x86\SDL2main.lib;glew\lib\Release\Win32\glew32s.lib;gtk\lib\gtk-win32-3.0.lib;gtk\lib\gdk-win32-3.0.lib;gtk\lib\gobject-2.0.lib;gtk\lib\glib-2.0.lib;gtk\lib\gio-2.0.lib;zlib\zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;opengl32.lib;SDL2\lib\x86\SDL2.lib;SDL2\lib\x86\SDL2main.lib;glew\lib\Release\Win32\glew32s.lib;gtk\lib\gtk-win32-2.0.lib;gtk\lib\gdk-win32-2.0.lib;gtk\lib\gobject-2.0.lib;gtk\lib\glib-2.0.lib;gtk\lib\gio-2.0.lib;zlib\zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -69,16 +69,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;X86_32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;GTK2;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;X86_32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>..\include;gtk\include\gtk-3.0;gtk\include\glib-2.0;gtk\include;gtk\lib\glib-2.0\include;gtk\include\pango-1.0;gtk\include\cairo;gtk\include\gdk-pixbuf-2.0;gtk\include\atk-1.0;SDL2\include;glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;gtk\include\gtk-2.0;gtk\include\glib-2.0;gtk\include;gtk\lib\gtk-2.0\include;gtk\lib\glib-2.0\include;gtk\include\pango-1.0;gtk\include\cairo;gtk\include\gdk-pixbuf-2.0;gtk\include\atk-1.0;SDL2\include;glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>ws2_32.lib;opengl32.lib;SDL2\lib\x86\SDL2.lib;SDL2\lib\x86\SDL2main.lib;glew\lib\Release\Win32\glew32s.lib;gtk\lib\gtk-win32-3.0.lib;gtk\lib\gdk-win32-3.0.lib;gtk\lib\gobject-2.0.lib;gtk\lib\glib-2.0.lib;gtk\lib\gio-2.0.lib;zlib\zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;opengl32.lib;SDL2\lib\x86\SDL2.lib;SDL2\lib\x86\SDL2main.lib;glew\lib\Release\Win32\glew32s.lib;gtk\lib\gtk-win32-2.0.lib;gtk\lib\gdk-win32-2.0.lib;gtk\lib\gobject-2.0.lib;gtk\lib\glib-2.0.lib;gtk\lib\gio-2.0.lib;zlib\zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

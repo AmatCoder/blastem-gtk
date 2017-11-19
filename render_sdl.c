@@ -508,12 +508,12 @@ NativeWindow render_init(int width, int height, char * title, uint8_t fullscreen
 	desired.callback = audio_callback;
 	desired.userdata = NULL;
 
-	if (SDL_OpenAudio(&desired, &actual) < 0) {
+	if (SDL_OpenAudio(&desired, NULL) < 0) {
 		fatal_error("Unable to open SDL audio: %s\n", SDL_GetError());
 	}
-	buffer_samples = actual.samples;
-	sample_rate = actual.freq;
-	printf("Initialized audio at frequency %d with a %d sample buffer\n", actual.freq, actual.samples);
+	buffer_samples = desired.samples;
+	sample_rate = desired.freq;
+	printf("Initialized audio at frequency %d with a %d sample buffer\n", desired.freq, desired.samples);
 	SDL_PauseAudio(0);
 	
 	uint32_t db_size;
