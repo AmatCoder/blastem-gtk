@@ -14,7 +14,7 @@
 #include "util.h"
 #include "ppm.h"
 
-#include <SDL2/SDL_syswm.h>
+#include <SDL_syswm.h>
 
 #ifndef DISABLE_OPENGL
 #include <GL/glew.h>
@@ -509,12 +509,12 @@ NativeWindow render_init(int width, int height, char * title, uint8_t fullscreen
 	desired.callback = audio_callback;
 	desired.userdata = NULL;
 
-	if (SDL_OpenAudio(&desired, &actual) < 0) {
+	if (SDL_OpenAudio(&desired, NULL) < 0) {
 		fatal_error("Unable to open SDL audio: %s\n", SDL_GetError());
 	}
-	buffer_samples = actual.samples;
-	sample_rate = actual.freq;
-	printf("Initialized audio at frequency %d with a %d sample buffer\n", actual.freq, actual.samples);
+	buffer_samples = desired.samples;
+	sample_rate = desired.freq;
+	printf("Initialized audio at frequency %d with a %d sample buffer\n", desired.freq, desired.samples);
 	SDL_PauseAudio(0);
 	
 	uint32_t db_size;
@@ -585,7 +585,7 @@ uint32_t *render_get_framebuffer(uint8_t which, int *pitch)
 		if (which <= FRAMEBUFFER_EVEN) {
 			locked_pixels = pixels;
 			if (which == FRAMEBUFFER_EVEN) {
-				pixels += *pitch;
+				(char*)pixels += *pitch;
 			}
 			locked_pitch = *pitch;
 			if (which != last) {

@@ -928,7 +928,7 @@ void translate_z80inst(z80inst * inst, z80_context * context, uint16_t address, 
 		}
 		bt_ir(code, z80_size(inst) == SZ_B ? 4 : 12, opts->gen.scratch2, z80_size(inst));
 		setcc_rdisp(code, CC_C, opts->gen.context_reg, zf_off(ZF_H));
-		if (z80_size(inst) == SZ_W & dst_op.mode == MODE_REG_DIRECT) {
+		if (z80_size(inst) == SZ_W && dst_op.mode == MODE_REG_DIRECT) {
 			mov_rr(code, dst_op.base, opts->gen.scratch2, SZ_W);
 			shr_ir(code, 8, opts->gen.scratch2, SZ_W);
 			mov_rrdisp(code, opts->gen.scratch2, opts->gen.context_reg, zf_off(ZF_XY), SZ_B);
@@ -995,7 +995,7 @@ void translate_z80inst(z80inst * inst, z80_context * context, uint16_t address, 
 		}
 		bt_ir(code, z80_size(inst) == SZ_B ? 4 : 12, opts->gen.scratch2, z80_size(inst));
 		setcc_rdisp(code, CC_C, opts->gen.context_reg, zf_off(ZF_H));
-		if (z80_size(inst) == SZ_W & dst_op.mode == MODE_REG_DIRECT) {
+		if (z80_size(inst) == SZ_W && dst_op.mode == MODE_REG_DIRECT) {
 			mov_rr(code, dst_op.base, opts->gen.scratch2, SZ_W);
 			shr_ir(code, 8, opts->gen.scratch2, SZ_W);
 			mov_rrdisp(code, opts->gen.scratch2, opts->gen.context_reg, zf_off(ZF_XY), SZ_B);
@@ -1059,7 +1059,7 @@ void translate_z80inst(z80inst * inst, z80_context * context, uint16_t address, 
 		}
 		bt_ir(code, z80_size(inst) == SZ_B ? 4 : 12, opts->gen.scratch2, z80_size(inst));
 		setcc_rdisp(code, CC_C, opts->gen.context_reg, zf_off(ZF_H));
-		if (z80_size(inst) == SZ_W & dst_op.mode == MODE_REG_DIRECT) {
+		if (z80_size(inst) == SZ_W && dst_op.mode == MODE_REG_DIRECT) {
 			mov_rr(code, dst_op.base, opts->gen.scratch2, SZ_W);
 			shr_ir(code, 8, opts->gen.scratch2, SZ_W);
 			mov_rrdisp(code, opts->gen.scratch2, opts->gen.context_reg, zf_off(ZF_XY), SZ_B);
@@ -1126,7 +1126,7 @@ void translate_z80inst(z80inst * inst, z80_context * context, uint16_t address, 
 		}
 		bt_ir(code, z80_size(inst) == SZ_B ? 4 : 12, opts->gen.scratch2, z80_size(inst));
 		setcc_rdisp(code, CC_C, opts->gen.context_reg, zf_off(ZF_H));
-		if (z80_size(inst) == SZ_W & dst_op.mode == MODE_REG_DIRECT) {
+		if (z80_size(inst) == SZ_W && dst_op.mode == MODE_REG_DIRECT) {
 			mov_rr(code, dst_op.base, opts->gen.scratch2, SZ_W);
 			shr_ir(code, 8, opts->gen.scratch2, SZ_W);
 			mov_rrdisp(code, opts->gen.scratch2, opts->gen.context_reg, zf_off(ZF_XY), SZ_B);
@@ -3069,8 +3069,7 @@ void z80_handle_deferred(z80_context * context)
 	}
 }
 
-extern void * z80_retranslate_inst(uint32_t address, z80_context * context, uint8_t * orig_start) asm("z80_retranslate_inst");
-void * z80_retranslate_inst(uint32_t address, z80_context * context, uint8_t * orig_start)
+code_ptr z80_retranslate_inst(uint32_t address, z80_context * context, uint8_t * orig_start)
 {
 	char disbuf[80];
 	z80_options * opts = context->options;

@@ -24,7 +24,9 @@ int gdb_sock;
 #include "68kinst.h"
 #include "debug.h"
 #include "util.h"
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <stddef.h>
 #include <stdlib.h>

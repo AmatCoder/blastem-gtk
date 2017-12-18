@@ -18,7 +18,7 @@ MEM:=mem_win.o
 TERMINAL:=terminal_win.o
 EXE:=.exe
 CC:=i686-w64-mingw32-gcc-win32
-CFLAGS:=-std=gnu99 -Wreturn-type -Werror=return-type -Werror=implicit-function-declaration -I"$(SDL2_PREFIX)/include/SDL2" -I"$(GLEW_PREFIX)/include" -DGLEW_STATIC
+CFLAGS:=-std=gnu99 -Wreturn-type -Werror=return-type -Werror=implicit-function-declaration -I"include" -I"$(SDL2_PREFIX)/include/SDL2" -I"$(GLEW_PREFIX)/include" -DGLEW_STATIC
 LDFLAGS:= $(GLEW32S_LIB) -L"$(SDL2_PREFIX)/lib" -lm -lmingw32 -lSDL2main -lSDL2 -lws2_32 -lopengl32 -lglu32 -mwindows
 CPU:=i686
 
@@ -35,7 +35,7 @@ LIBS=sdl2 glew gl zlib
 endif #Darwin
 
 HAS_PROC:=$(shell if [ -d /proc ]; then /bin/echo -e -DHAS_PROC; fi)
-CFLAGS:=-std=gnu99 -Wreturn-type -Werror=return-type -Werror=implicit-function-declaration -Wno-unused-value $(HAS_PROC)
+CFLAGS:=-std=gnu99 -Wreturn-type -Werror=return-type -Werror=implicit-function-declaration -I"include" -Wno-unused-value $(HAS_PROC)
 ifeq ($(OS),Darwin)
 #This should really be based on whether or not the C compiler is clang rather than based on the OS
 CFLAGS+= -Wno-logical-op-parentheses

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{283B9E28-19E1-4C5B-A0E4-E61C2A3D93E5}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>blastemgtkvstudio</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;GTK2;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;X86_32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\include;gtk\include\gtk-2.0;gtk\include\glib-2.0;gtk\include;gtk\lib\gtk-2.0\include;gtk\lib\glib-2.0\include;gtk\include\pango-1.0;gtk\include\cairo;gtk\include\gdk-pixbuf-2.0;gtk\include\atk-1.0;SDL2\include;glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>ws2_32.lib;opengl32.lib;SDL2\lib\x86\SDL2.lib;SDL2\lib\x86\SDL2main.lib;glew\lib\Release\Win32\glew32s.lib;gtk\lib\gtk-win32-2.0.lib;gtk\lib\gdk-win32-2.0.lib;gtk\lib\gobject-2.0.lib;gtk\lib\glib-2.0.lib;gtk\lib\gio-2.0.lib;zlib\zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;GTK2;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;X86_32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\include;gtk\include\gtk-2.0;gtk\include\glib-2.0;gtk\include;gtk\lib\gtk-2.0\include;gtk\lib\glib-2.0\include;gtk\include\pango-1.0;gtk\include\cairo;gtk\include\gdk-pixbuf-2.0;gtk\include\atk-1.0;SDL2\include;glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>ws2_32.lib;opengl32.lib;SDL2\lib\x86\SDL2.lib;SDL2\lib\x86\SDL2main.lib;glew\lib\Release\Win32\glew32s.lib;gtk\lib\gtk-win32-2.0.lib;gtk\lib\gdk-win32-2.0.lib;gtk\lib\gobject-2.0.lib;gtk\lib\glib-2.0.lib;gtk\lib\gio-2.0.lib;zlib\zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\68kinst.h" />
+    <ClInclude Include="..\include\ajunzip.h" />
+    <ClInclude Include="..\include\arena.h" />
+    <ClInclude Include="..\include\backend.h" />
+    <ClInclude Include="..\include\blastem.h" />
+    <ClInclude Include="..\include\config.h" />
+    <ClInclude Include="..\include\debug.h" />
+    <ClInclude Include="..\include\gdb_remote.h" />
+    <ClInclude Include="..\include\gen.h" />
+    <ClInclude Include="..\include\genesis.h" />
+    <ClInclude Include="..\include\gen_x86.h" />
+    <ClInclude Include="..\include\gresource.h" />
+    <ClInclude Include="..\include\gst.h" />
+    <ClInclude Include="..\include\gtk_gui.h" />
+    <ClInclude Include="..\include\hash.h" />
+    <ClInclude Include="..\include\i2c.h" />
+    <ClInclude Include="..\include\io.h" />
+    <ClInclude Include="..\include\m68k_core.h" />
+    <ClInclude Include="..\include\m68k_internal.h" />
+    <ClInclude Include="..\include\mem.h" />
+    <ClInclude Include="..\include\menu.h" />
+    <ClInclude Include="..\include\multi_game.h" />
+    <ClInclude Include="..\include\nor.h" />
+    <ClInclude Include="..\include\ppm.h" />
+    <ClInclude Include="..\include\psg.h" />
+    <ClInclude Include="..\include\realtec.h" />
+    <ClInclude Include="..\include\render.h" />
+    <ClInclude Include="..\include\romdb.h" />
+    <ClInclude Include="..\include\sega_mapper.h" />
+    <ClInclude Include="..\include\serialize.h" />
+    <ClInclude Include="..\include\sms.h" />
+    <ClInclude Include="..\include\system.h" />
+    <ClInclude Include="..\include\terminal.h" />
+    <ClInclude Include="..\include\tern.h" />
+    <ClInclude Include="..\include\util.h" />
+    <ClInclude Include="..\include\vdp.h" />
+    <ClInclude Include="..\include\wave.h" />
+    <ClInclude Include="..\include\xband.h" />
+    <ClInclude Include="..\include\ym2612.h" />
+    <ClInclude Include="..\include\z80inst.h" />
+    <ClInclude Include="..\include\z80_to_x86.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\68kinst.c" />
+    <ClCompile Include="..\ajunzip.c" />
+    <ClCompile Include="..\arena.c" />
+    <ClCompile Include="..\backend.c" />
+    <ClCompile Include="..\backend_x86.c" />
+    <ClCompile Include="..\blastem.c" />
+    <ClCompile Include="..\config.c" />
+    <ClCompile Include="..\debug.c" />
+    <ClCompile Include="..\gdb_remote.c" />
+    <ClCompile Include="..\gen.c" />
+    <ClCompile Include="..\genesis.c" />
+    <ClCompile Include="..\gen_x86.c" />
+    <ClCompile Include="..\gresource.c" />
+    <ClCompile Include="..\gst.c" />
+    <ClCompile Include="..\gtk_gui.c" />
+    <ClCompile Include="..\hash.c" />
+    <ClCompile Include="..\i2c.c" />
+    <ClCompile Include="..\io.c" />
+    <ClCompile Include="..\m68k_core.c" />
+    <ClCompile Include="..\m68k_core_x86.c" />
+    <ClCompile Include="..\mem_win.c" />
+    <ClCompile Include="..\menu.c" />
+    <ClCompile Include="..\multi_game.c" />
+    <ClCompile Include="..\nor.c" />
+    <ClCompile Include="..\ppm.c" />
+    <ClCompile Include="..\psg.c" />
+    <ClCompile Include="..\realtec.c" />
+    <ClCompile Include="..\render_sdl.c" />
+    <ClCompile Include="..\romdb.c" />
+    <ClCompile Include="..\sega_mapper.c" />
+    <ClCompile Include="..\serialize.c" />
+    <ClCompile Include="..\sms.c" />
+    <ClCompile Include="..\system.c" />
+    <ClCompile Include="..\terminal_win.c" />
+    <ClCompile Include="..\tern.c" />
+    <ClCompile Include="..\util.c" />
+    <ClCompile Include="..\vdp.c" />
+    <ClCompile Include="..\wave.c" />
+    <ClCompile Include="..\xband.c" />
+    <ClCompile Include="..\ym2612.c" />
+    <ClCompile Include="..\z80inst.c" />
+    <ClCompile Include="..\z80_to_x86.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\blastem.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
